@@ -71,6 +71,11 @@ void AShimuraPlayer::BeginPlay()
 //////////////////////////////////////////////////////////////////////////
 // Input
 
+void AShimuraPlayer::FinishDodging()
+{
+	bDodging = false;
+}
+
 void AShimuraPlayer::NotifyControllerChanged()
 {
 	Super::NotifyControllerChanged();
@@ -113,6 +118,8 @@ void AShimuraPlayer::Move(const FInputActionValue& Value)
 	// input is a Vector2D
 	MovementVector = Value.Get<FVector2D>();
 
+	if (bDodging) return;
+	
 	if (Controller != nullptr)
 	{
 		// find out which way is forward
@@ -146,6 +153,8 @@ void AShimuraPlayer::Look(const FInputActionValue& Value)
 
 void AShimuraPlayer::Dodge(const FInputActionValue& Value)
 {
+	if (bDodging) return;
+	
 	if (MovementVector.Equals(FVector2D::Zero()))
 	{
 		return;
@@ -185,6 +194,8 @@ void AShimuraPlayer::Dodge(const FInputActionValue& Value)
 			AnimInstance->Montage_JumpToSection(FName("Left"), DodgeMontage);
 		}
 	}
+
+	bDodging = true;
 }
 
 void AShimuraPlayer::Tick(float DeltaTime)

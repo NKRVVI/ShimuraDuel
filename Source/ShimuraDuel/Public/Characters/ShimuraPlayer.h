@@ -72,7 +72,11 @@ protected:
 	ALordShimura* Opponent;
 
 	FVector2D MovementVector;
-			
+	UPROPERTY(BlueprintReadWrite)
+	bool bDodging = false;
+
+	UFUNCTION(BlueprintCallable)
+	void FinishDodging();
 
 protected:
 
