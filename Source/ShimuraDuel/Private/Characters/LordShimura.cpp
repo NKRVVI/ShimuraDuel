@@ -3,7 +3,10 @@
 
 #include "LordShimura.h"
 
+#include "Characters/ShimuraPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 // Sets default values
@@ -30,13 +33,46 @@ ALordShimura::ALordShimura()
 void ALordShimura::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (AShimuraPlayer* Player = Cast<AShimuraPlayer>(UGameplayStatics::GetPlayerPawn(this, 0)))
+	{
+		Opponent = Player;
+	}
+
+	GetMesh()->GetAnimInstance()->Montage_Play(AttackMontage);
+}
+
+void ALordShimura::OnOpponentDodgeFinished_Implementation()
+{
+	Opponent->OnDodgeFinished.RemoveAll(this);
+
+	GetMesh()->GetAnimInstance()->Montage_Resume(AttackMontage);
+}
+
+void ALordShimura::Telegraph_Implementation()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (Opponent->IsDodging())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Dodging"));
+		AnimInstance->Montage_Pause(AttackMontage);
+		Opponent->OnDodgeFinished.AddDynamic(this, &ThisClass::OnOpponentDodgeFinished);
+	}
 }
 
 // Called every frame
 void ALordShimura::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	Controller->SetControlRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Opponent->GetActorLocation()));
+	FRotator Rotation = GetActorRotation();
+	Rotation.Yaw = Controller->GetControlRotation().Yaw;
+	SetActorRotation(Rotation);
+
+	Attack();
+	
 }
 
 // Called to bind functionality to input

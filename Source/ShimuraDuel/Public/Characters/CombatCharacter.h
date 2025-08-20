@@ -22,6 +22,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CombatCharacter")
 	UAnimMontage* DodgeMontage;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CombatCharacter")
+	UAnimMontage* AttackMontage;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bAttacking = false;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Attack();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void FinishAttacking();
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -6,6 +6,8 @@
 #include "Characters/CombatCharacter.h"
 #include "LordShimura.generated.h"
 
+class AShimuraPlayer;
+
 UCLASS()
 class SHIMURADUEL_API ALordShimura : public ACombatCharacter
 {
@@ -18,6 +20,15 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Telegraph();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OnOpponentDodgeFinished();
+
+	UPROPERTY(BlueprintReadWrite)
+	AShimuraPlayer* Opponent;
 
 public:
 	// Called every frame

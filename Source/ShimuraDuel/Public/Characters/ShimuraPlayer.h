@@ -15,6 +15,8 @@ struct FInputActionValue;
 
 class ALordShimura;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDodgeFinished);
+
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
@@ -56,6 +58,9 @@ public:
 
 	virtual void BeginPlay() override;
 
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnDodgeFinished OnDodgeFinished;
+
 protected:
 
 	/** Called for movement input */
@@ -89,5 +94,7 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	FORCEINLINE bool IsDodging() const { return bDodging; }
 };
 

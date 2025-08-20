@@ -74,6 +74,7 @@ void AShimuraPlayer::BeginPlay()
 void AShimuraPlayer::FinishDodging()
 {
 	bDodging = false;
+	OnDodgeFinished.Broadcast();
 }
 
 void AShimuraPlayer::NotifyControllerChanged()

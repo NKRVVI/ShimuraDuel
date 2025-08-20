@@ -18,6 +18,19 @@ void ACombatCharacter::BeginPlay()
 	
 }
 
+void ACombatCharacter::Attack_Implementation()
+{
+	if (bAttacking) return;
+	
+	bAttacking = true;
+	GetMesh()->GetAnimInstance()->Montage_Play(AttackMontage);
+}
+
+void ACombatCharacter::FinishAttacking_Implementation()
+{
+	bAttacking = false;
+}
+
 // Called every frame
 void ACombatCharacter::Tick(float DeltaTime)
 {
