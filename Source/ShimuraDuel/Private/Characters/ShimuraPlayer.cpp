@@ -73,7 +73,7 @@ void AShimuraPlayer::BeginPlay()
 
 void AShimuraPlayer::FinishDodging()
 {
-	bDodging = false;
+	CurrentState = EActionState::None;
 	OnDodgeFinished.Broadcast();
 }
 
@@ -110,7 +110,6 @@ void AShimuraPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		EnhancedInputComponent->BindAction(BlockAction, ETriggerEvent::Started, this, &ThisClass::BlockStart);
 		EnhancedInputComponent->BindAction(BlockAction, ETriggerEvent::Completed, this, &ThisClass::BlockEnd);
-		EnhancedInputComponent->BindAction(ParryAction, ETriggerEvent::Triggered, this, &ThisClass::Parry);
 	}
 	else
 	{
@@ -123,7 +122,7 @@ void AShimuraPlayer::Move(const FInputActionValue& Value)
 	// input is a Vector2D
 	MovementVector = Value.Get<FVector2D>();
 
-	if (bDodging) return;
+	if (CurrentState != EActionState::None) return;
 	
 	if (Controller != nullptr)
 	{
@@ -158,7 +157,7 @@ void AShimuraPlayer::Look(const FInputActionValue& Value)
 
 void AShimuraPlayer::Dodge(const FInputActionValue& Value)
 {
-	if (bDodging) return;
+	if (CurrentState != EActionState::None) return;
 	
 	if (MovementVector.Equals(FVector2D::Zero()))
 	{
@@ -200,25 +199,29 @@ void AShimuraPlayer::Dodge(const FInputActionValue& Value)
 		}
 	}
 
-	bDodging = true;
+	CurrentState = EActionState::Dodge;
 }
 
 void AShimuraPlayer::BlockStart(const FInputActionValue& Value)
 {
-	bIsBlocking = true;
+	if (CurrentState != EActionState::None) return;
+	CurrentState = EActionState::Block;
 	UE_LOG(LogTemp, Warning, TEXT("BlockStart"));
+	BlockTimeBetweenClick = GetWorld()->GetTimeSeconds();
 }
 
 void AShimuraPlayer::BlockEnd(const FInputActionValue& Value)
 {
-	bIsBlocking = false;
-	UE_LOG(LogTemp, Warning, TEXT("BlockEnd"));
-}
-
-void AShimuraPlayer::Parry(const FInputActionValue& Value)
-{
-	ACombatCharacter::Parry();
-	UE_LOG(LogTemp, Warning, TEXT("Parry"));
+	if (GetWorld()->GetTimeSeconds() - BlockTimeBetweenClick < 0.25f)
+	{
+		ACombatCharacter::Parry();
+		UE_LOG(LogTemp, Warning, TEXT("Parry"));
+	}
+	else
+	{
+		CurrentState = EActionState::None;
+		UE_LOG(LogTemp, Warning, TEXT("BlockEnd"));	
+	}
 }
 
 void AShimuraPlayer::Tick(float DeltaTime)

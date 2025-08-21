@@ -6,6 +6,16 @@
 #include "GameFramework/Character.h"
 #include "CombatCharacter.generated.h"
 
+UENUM(Blueprintable)
+enum class EActionState : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Attack UMETA(DisplayName = "Attack"),
+	Dodge UMETA(DisplayName = "Dodge"),
+	Block UMETA(DisplayName = "Block"),
+	Parry UMETA(DisplayName = "Parry")
+};
+
 UCLASS()
 class SHIMURADUEL_API ACombatCharacter : public ACharacter
 {
@@ -22,6 +32,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	EActionState CurrentState = EActionState::None;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CombatCharacter")
 	UAnimMontage* DodgeMontage;
 
@@ -32,13 +44,7 @@ protected:
 	UAnimMontage* ParryMontage;
 
 	UPROPERTY(BlueprintReadWrite)
-	bool bAttacking = false;
-
-	UPROPERTY(BlueprintReadWrite)
 	bool bInMiddleOfSwing = false;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool bIsBlocking = false;
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsParriable = false;
@@ -55,10 +61,15 @@ protected:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Parry();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void FinishParry();
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	FORCEINLINE bool IsDodging() const { return CurrentState == EActionState::Dodge; }
 };

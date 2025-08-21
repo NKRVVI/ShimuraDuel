@@ -53,9 +53,6 @@ class AShimuraPlayer : public ACombatCharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* BlockAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* ParryAction;
 	
 
 public:
@@ -80,19 +77,17 @@ protected:
 
 	void BlockEnd(const FInputActionValue& Value);
 
-	void Parry(const FInputActionValue& Value);
-
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(BlueprintReadWrite)
 	ALordShimura* Opponent;
 
 	FVector2D MovementVector;
-	UPROPERTY(BlueprintReadWrite)
-	bool bDodging = false;
 
 	UFUNCTION(BlueprintCallable)
 	void FinishDodging();
+
+	float BlockTimeBetweenClick = 0.f;
 
 protected:
 
@@ -105,7 +100,5 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-
-	FORCEINLINE bool IsDodging() const { return bDodging; }
 };
 

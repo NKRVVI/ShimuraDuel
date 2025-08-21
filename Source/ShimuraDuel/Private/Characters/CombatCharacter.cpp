@@ -26,16 +26,16 @@ void ACombatCharacter::BeginPlay()
 
 void ACombatCharacter::Attack_Implementation()
 {
-	if (bAttacking) return;
-	
-	bAttacking = true;
+	if (CurrentState != EActionState::None) return;
+
+	CurrentState = EActionState::Attack;
 	GetMesh()->GetAnimInstance()->Montage_Play(AttackMontage);
 	bInMiddleOfSwing = true;
 }
 
 void ACombatCharacter::FinishAttacking_Implementation()
 {
-	bAttacking = false;
+	CurrentState = EActionState::None;
 	Cast<AKatana>(Katana->GetChildActor())->DisableCollision();
 	bInMiddleOfSwing = false;
 }
@@ -48,7 +48,15 @@ void ACombatCharacter::StartAttacking_Implementation()
 
 void ACombatCharacter::Parry_Implementation()
 {
+	if (CurrentState != EActionState::None && CurrentState != EActionState::Block) return;
+	
 	GetMesh()->GetAnimInstance()->Montage_Play(ParryMontage);
+	CurrentState = EActionState::Parry;
+}
+
+void ACombatCharacter::FinishParry_Implementation()
+{
+	CurrentState = EActionState::None;
 }
 
 // Called every frame
