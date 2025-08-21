@@ -28,11 +28,20 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CombatCharacter")
 	UAnimMontage* AttackMontage;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CombatCharacter")
+	UAnimMontage* ParryMontage;
+
 	UPROPERTY(BlueprintReadWrite)
 	bool bAttacking = false;
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bInMiddleOfSwing = false;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsBlocking = false;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsParriable = false;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Attack();
@@ -42,6 +51,9 @@ protected:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void StartAttacking();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Parry();
 
 public:
 	// Called every frame

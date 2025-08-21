@@ -51,6 +51,11 @@ class AShimuraPlayer : public ACombatCharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* DodgeAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* BlockAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ParryAction;
 	
 
 public:
@@ -70,6 +75,12 @@ protected:
 	void Look(const FInputActionValue& Value);
 
 	void Dodge(const FInputActionValue& Value);
+
+	void BlockStart(const FInputActionValue& Value);
+
+	void BlockEnd(const FInputActionValue& Value);
+
+	void Parry(const FInputActionValue& Value);
 
 	virtual void Tick(float DeltaTime) override;
 

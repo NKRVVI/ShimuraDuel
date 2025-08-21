@@ -3,6 +3,7 @@
 
 #include "Katana.h"
 
+#include "Characters/CombatCharacter.h"
 #include "Components/BoxComponent.h"
 
 
@@ -26,10 +27,9 @@ void AKatana::DisableCollision_Implementation()
 void AKatana::OnHit_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor != Owner)
+	if (OtherActor->IsA<ACombatCharacter>() && OtherActor != Owner)
 	{
 		DisableCollision();
-		UE_LOG(LogTemp, Warning, TEXT("Hit actor is %s"), *OtherActor->GetName());
 	}
 }
 

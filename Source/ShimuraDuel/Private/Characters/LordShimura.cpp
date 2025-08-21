@@ -38,8 +38,6 @@ void ALordShimura::BeginPlay()
 	{
 		Opponent = Player;
 	}
-
-	GetMesh()->GetAnimInstance()->Montage_Play(AttackMontage);
 }
 
 void ALordShimura::OnOpponentDodgeFinished_Implementation()
@@ -54,9 +52,11 @@ void ALordShimura::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (!bInMiddleOfSwing)
+	if (!bInMiddleOfSwing || !Opponent->IsDodging())
 	{
-		Controller->SetControlRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Opponent->GetActorLocation()));
+		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Opponent->GetActorLocation());
+		FRotator ControllerRotation = FMath::Lerp<FRotator, float>(Controller->GetControlRotation(), LookAtRotation, .9f);
+		Controller->SetControlRotation(LookAtRotation);
 		FRotator Rotation = GetActorRotation();
 		Rotation.Yaw = Controller->GetControlRotation().Yaw;
 		SetActorRotation(Rotation);

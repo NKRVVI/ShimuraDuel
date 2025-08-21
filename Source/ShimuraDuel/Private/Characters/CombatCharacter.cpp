@@ -46,6 +46,11 @@ void ACombatCharacter::StartAttacking_Implementation()
 	Cast<AKatana>(Katana->GetChildActor())->EnableCollision();
 }
 
+void ACombatCharacter::Parry_Implementation()
+{
+	GetMesh()->GetAnimInstance()->Montage_Play(ParryMontage);
+}
+
 // Called every frame
 void ACombatCharacter::Tick(float DeltaTime)
 {

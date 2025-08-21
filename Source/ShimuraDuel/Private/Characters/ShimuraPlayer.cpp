@@ -107,6 +107,10 @@ void AShimuraPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShimuraPlayer::Look);
 
 		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Completed, this, &ThisClass::Dodge);
+
+		EnhancedInputComponent->BindAction(BlockAction, ETriggerEvent::Started, this, &ThisClass::BlockStart);
+		EnhancedInputComponent->BindAction(BlockAction, ETriggerEvent::Completed, this, &ThisClass::BlockEnd);
+		EnhancedInputComponent->BindAction(ParryAction, ETriggerEvent::Triggered, this, &ThisClass::Parry);
 	}
 	else
 	{
@@ -197,6 +201,24 @@ void AShimuraPlayer::Dodge(const FInputActionValue& Value)
 	}
 
 	bDodging = true;
+}
+
+void AShimuraPlayer::BlockStart(const FInputActionValue& Value)
+{
+	bIsBlocking = true;
+	UE_LOG(LogTemp, Warning, TEXT("BlockStart"));
+}
+
+void AShimuraPlayer::BlockEnd(const FInputActionValue& Value)
+{
+	bIsBlocking = false;
+	UE_LOG(LogTemp, Warning, TEXT("BlockEnd"));
+}
+
+void AShimuraPlayer::Parry(const FInputActionValue& Value)
+{
+	ACombatCharacter::Parry();
+	UE_LOG(LogTemp, Warning, TEXT("Parry"));
 }
 
 void AShimuraPlayer::Tick(float DeltaTime)
