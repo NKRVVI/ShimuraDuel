@@ -15,6 +15,9 @@ public:
 	// Sets default values for this character's properties
 	ACombatCharacter();
 
+	UPROPERTY(EditAnywhere)
+	UChildActorComponent* Katana;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -33,6 +36,9 @@ protected:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void FinishAttacking();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void StartAttacking();
 
 public:
 	// Called every frame

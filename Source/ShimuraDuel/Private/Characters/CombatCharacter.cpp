@@ -3,19 +3,25 @@
 
 #include "Characters/CombatCharacter.h"
 
+#include "Katana.h"
+
 
 // Sets default values
 ACombatCharacter::ACombatCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	Katana = CreateDefaultSubobject<UChildActorComponent>("Katana");
+	Katana->SetupAttachment(GetMesh(), FName("katana_r"));
 }
 
 // Called when the game starts or when spawned
 void ACombatCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	Katana->GetChildActor()->SetOwner(this);
 }
 
 void ACombatCharacter::Attack_Implementation()
@@ -29,6 +35,13 @@ void ACombatCharacter::Attack_Implementation()
 void ACombatCharacter::FinishAttacking_Implementation()
 {
 	bAttacking = false;
+	Cast<AKatana>(Katana->GetChildActor())->DisableCollision();
+}
+
+//POST TELEGRAPH
+void ACombatCharacter::StartAttacking_Implementation()
+{
+	Cast<AKatana>(Katana->GetChildActor())->EnableCollision();
 }
 
 // Called every frame
