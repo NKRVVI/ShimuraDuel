@@ -49,27 +49,18 @@ void ALordShimura::OnOpponentDodgeFinished_Implementation()
 	GetMesh()->GetAnimInstance()->Montage_Resume(AttackMontage);
 }
 
-void ALordShimura::Telegraph_Implementation()
-{
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-
-	if (Opponent->IsDodging())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Dodging"));
-		AnimInstance->Montage_Pause(AttackMontage);
-		Opponent->OnDodgeFinished.AddDynamic(this, &ThisClass::OnOpponentDodgeFinished);
-	}
-}
-
 // Called every frame
 void ALordShimura::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	Controller->SetControlRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Opponent->GetActorLocation()));
-	FRotator Rotation = GetActorRotation();
-	Rotation.Yaw = Controller->GetControlRotation().Yaw;
-	SetActorRotation(Rotation);
+	if (!bInMiddleOfSwing)
+	{
+		Controller->SetControlRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Opponent->GetActorLocation()));
+		FRotator Rotation = GetActorRotation();
+		Rotation.Yaw = Controller->GetControlRotation().Yaw;
+		SetActorRotation(Rotation);
+	}
 
 	Attack();
 	

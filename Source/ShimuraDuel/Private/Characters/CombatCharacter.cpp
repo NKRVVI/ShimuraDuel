@@ -30,12 +30,14 @@ void ACombatCharacter::Attack_Implementation()
 	
 	bAttacking = true;
 	GetMesh()->GetAnimInstance()->Montage_Play(AttackMontage);
+	bInMiddleOfSwing = true;
 }
 
 void ACombatCharacter::FinishAttacking_Implementation()
 {
 	bAttacking = false;
 	Cast<AKatana>(Katana->GetChildActor())->DisableCollision();
+	bInMiddleOfSwing = false;
 }
 
 //POST TELEGRAPH

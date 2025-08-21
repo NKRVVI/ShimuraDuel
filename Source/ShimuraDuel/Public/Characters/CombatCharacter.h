@@ -31,6 +31,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	bool bAttacking = false;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bInMiddleOfSwing = false;
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Attack();
 

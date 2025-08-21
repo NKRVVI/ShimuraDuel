@@ -22,9 +22,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void Telegraph();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnOpponentDodgeFinished();
 
 	UPROPERTY(BlueprintReadWrite)
