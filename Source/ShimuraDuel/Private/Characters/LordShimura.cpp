@@ -52,7 +52,7 @@ void ALordShimura::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (!bInMiddleOfSwing || !Opponent->IsDodging())
+	if (CurrentState != EActionState::Attack || !Opponent->IsDodging())
 	{
 		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Opponent->GetActorLocation());
 		FRotator ControllerRotation = FMath::Lerp<FRotator, float>(Controller->GetControlRotation(), LookAtRotation, .9f);

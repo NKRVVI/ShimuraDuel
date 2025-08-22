@@ -30,14 +30,16 @@ void ACombatCharacter::Attack_Implementation()
 
 	CurrentState = EActionState::Attack;
 	GetMesh()->GetAnimInstance()->Montage_Play(AttackMontage);
-	bInMiddleOfSwing = true;
+}
+
+void ACombatCharacter::FinishSwing_Implementation()
+{
+	Cast<AKatana>(Katana->GetChildActor())->DisableCollision();
 }
 
 void ACombatCharacter::FinishAttacking_Implementation()
 {
 	CurrentState = EActionState::None;
-	Cast<AKatana>(Katana->GetChildActor())->DisableCollision();
-	bInMiddleOfSwing = false;
 }
 
 //POST TELEGRAPH
@@ -55,6 +57,17 @@ void ACombatCharacter::Parry_Implementation()
 }
 
 void ACombatCharacter::FinishParry_Implementation()
+{
+	CurrentState = EActionState::None;
+}
+
+void ACombatCharacter::GetHit_Implementation()
+{
+	GetMesh()->GetAnimInstance()->Montage_Play(GetHitMontage);
+	CurrentState = EActionState::GetHit;
+}
+
+void ACombatCharacter::FinishGetHit_Implementation()
 {
 	CurrentState = EActionState::None;
 }

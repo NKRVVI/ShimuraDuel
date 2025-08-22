@@ -13,7 +13,8 @@ enum class EActionState : uint8
 	Attack UMETA(DisplayName = "Attack"),
 	Dodge UMETA(DisplayName = "Dodge"),
 	Block UMETA(DisplayName = "Block"),
-	Parry UMETA(DisplayName = "Parry")
+	Parry UMETA(DisplayName = "Parry"),
+	GetHit UMETA(DisplayName = "GetHit")
 };
 
 UCLASS()
@@ -27,6 +28,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UChildActorComponent* Katana;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void GetHit();
 
 protected:
 	// Called when the game starts or when spawned
@@ -43,6 +47,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CombatCharacter")
 	UAnimMontage* ParryMontage;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CombatCharacter")
+	UAnimMontage* GetHitMontage;
+
 	UPROPERTY(BlueprintReadWrite)
 	bool bInMiddleOfSwing = false;
 
@@ -51,6 +58,9 @@ protected:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Attack();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void FinishSwing();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void FinishAttacking();
@@ -63,6 +73,9 @@ protected:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void FinishParry();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void FinishGetHit();
 
 public:
 	// Called every frame

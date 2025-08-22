@@ -29,7 +29,12 @@ void AKatana::OnHit_Implementation(UPrimitiveComponent* OverlappedComponent, AAc
 {
 	if (OtherActor->IsA<ACombatCharacter>() && OtherActor != Owner)
 	{
-		DisableCollision();
+		ACombatCharacter* Other = Cast<ACombatCharacter>(OtherActor);
+		if (!Other->IsDodging() && !Other->IsBlocking())
+		{
+			Cast<ACombatCharacter>(OtherActor)->GetHit();
+			DisableCollision();	
+		}
 	}
 }
 
