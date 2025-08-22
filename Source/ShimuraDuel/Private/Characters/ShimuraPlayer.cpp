@@ -117,6 +117,11 @@ void AShimuraPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	}
 }
 
+ACombatCharacter* AShimuraPlayer::GetOppponent()
+{
+	return Opponent;
+}
+
 void AShimuraPlayer::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D

@@ -72,3 +72,8 @@ void ALordShimura::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+ACombatCharacter* ALordShimura::GetOppponent()
+{
+	return Opponent;
+}
+

@@ -25,8 +25,14 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void DisableCollision();
 
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsOverlapping = false;
+
 	UFUNCTION(BlueprintNativeEvent)
 	void OnHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnHitEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 protected:
 	// Called when the game starts or when spawned

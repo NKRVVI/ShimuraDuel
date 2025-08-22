@@ -27,7 +27,7 @@ void AKatana::DisableCollision_Implementation()
 void AKatana::OnHit_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->IsA<ACombatCharacter>() && OtherActor != Owner)
+	if (Cast<ACombatCharacter>(GetOwner())->GetOppponent() == OtherActor)
 	{
 		ACombatCharacter* Other = Cast<ACombatCharacter>(OtherActor);
 		if (!Other->IsDodging() && !Other->IsBlocking())
@@ -35,6 +35,19 @@ void AKatana::OnHit_Implementation(UPrimitiveComponent* OverlappedComponent, AAc
 			Cast<ACombatCharacter>(OtherActor)->GetHit();
 			DisableCollision();	
 		}
+		else
+		{
+			bIsOverlapping = true;
+		}
+	}
+}
+
+void AKatana::OnHitEnd_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (Cast<ACombatCharacter>(GetOwner())->GetOppponent() == OtherActor)
+	{
+		bIsOverlapping = false;
 	}
 }
 
@@ -47,11 +60,24 @@ void AKatana::BeginPlay()
 	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnHit);
+	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnHitEnd);
 }
 
 // Called every frame
 void AKatana::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (bIsOverlapping)
+	{
+		if (BoxComp->IsOverlappingActor(Cast<ACombatCharacter>(GetOwner())->GetOppponent()))
+		{
+			ACombatCharacter* Opponent = Cast<ACombatCharacter>(GetOwner())->GetOppponent();
+			if (!Opponent->IsDodging() && !Opponent->IsBlocking())
+			{
+				Opponent->GetHit();
+				DisableCollision();
+			}
+		}
+	}
 }
 

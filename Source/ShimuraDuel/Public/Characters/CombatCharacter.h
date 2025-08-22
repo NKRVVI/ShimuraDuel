@@ -26,7 +26,7 @@ public:
 	// Sets default values for this character's properties
 	ACombatCharacter();
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UChildActorComponent* Katana;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
@@ -88,4 +88,6 @@ public:
 	FORCEINLINE bool IsDodging() const { return CurrentState == EActionState::Dodge; }
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE bool IsBlocking() const { return CurrentState == EActionState::Block; }
+	UFUNCTION(BlueprintPure)
+	virtual ACombatCharacter* GetOppponent(){return nullptr;}
 };
