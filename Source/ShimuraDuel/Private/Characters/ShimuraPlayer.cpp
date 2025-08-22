@@ -122,7 +122,7 @@ void AShimuraPlayer::Move(const FInputActionValue& Value)
 	// input is a Vector2D
 	MovementVector = Value.Get<FVector2D>();
 
-	if (CurrentState != EActionState::None) return;
+	if (CurrentState != EActionState::None && !IsBlocking()) return;
 	
 	if (Controller != nullptr)
 	{
@@ -214,7 +214,7 @@ void AShimuraPlayer::BlockEnd(const FInputActionValue& Value)
 {
 	if (GetWorld()->GetTimeSeconds() - BlockTimeBetweenClick < 0.25f)
 	{
-		ACombatCharacter::Parry();
+		Parry();
 		UE_LOG(LogTemp, Warning, TEXT("Parry"));
 	}
 	else

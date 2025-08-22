@@ -71,5 +71,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintPure)
 	FORCEINLINE bool IsDodging() const { return CurrentState == EActionState::Dodge; }
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE bool IsBlocking() const { return CurrentState == EActionState::Block; }
 };
