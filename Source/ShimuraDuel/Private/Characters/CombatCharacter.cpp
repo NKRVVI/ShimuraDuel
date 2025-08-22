@@ -43,7 +43,7 @@ void ACombatCharacter::FinishAttacking_Implementation()
 }
 
 //POST TELEGRAPH
-void ACombatCharacter::StartAttacking_Implementation()
+void ACombatCharacter::StartSwing_Implementation()
 {
 	Cast<AKatana>(Katana->GetChildActor())->EnableCollision();
 }

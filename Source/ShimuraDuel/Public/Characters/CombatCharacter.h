@@ -66,7 +66,7 @@ protected:
 	void FinishAttacking();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void StartAttacking();
+	void StartSwing();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Parry();
