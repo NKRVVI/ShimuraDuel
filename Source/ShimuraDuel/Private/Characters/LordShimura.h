@@ -8,6 +8,8 @@
 
 class AShimuraPlayer;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAttackFinished);
+
 UCLASS()
 class SHIMURADUEL_API ALordShimura : public ACombatCharacter
 {
@@ -16,6 +18,9 @@ class SHIMURADUEL_API ALordShimura : public ACombatCharacter
 public:
 	// Sets default values for this character's properties
 	ALordShimura();
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FAttackFinished OnAttackFinished;
 
 protected:
 	// Called when the game starts or when spawned
@@ -26,6 +31,12 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	AShimuraPlayer* Opponent;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bRunning = false;
+
+	virtual void FinishAttacking_Implementation() override;
+	virtual void GetHit_Implementation() override;
 
 public:
 	// Called every frame

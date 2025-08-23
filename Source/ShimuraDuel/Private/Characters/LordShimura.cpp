@@ -47,6 +47,18 @@ void ALordShimura::OnOpponentDodgeFinished_Implementation()
 	GetMesh()->GetAnimInstance()->Montage_Resume(AttackMontage);
 }
 
+void ALordShimura::FinishAttacking_Implementation()
+{
+	Super::FinishAttacking_Implementation();
+
+	OnAttackFinished.Broadcast();
+}
+
+void ALordShimura::GetHit_Implementation()
+{
+	Super::GetHit_Implementation();
+}
+
 // Called every frame
 void ALordShimura::Tick(float DeltaTime)
 {
