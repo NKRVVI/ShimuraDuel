@@ -36,10 +36,6 @@ void AKatana::OnHit_Implementation(UPrimitiveComponent* OverlappedComponent, AAc
 			Cast<ACombatCharacter>(OtherActor)->GetHit();
 			DisableCollision();	
 		}
-		else if (Other->IsBlocking())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Blocking"));
-		}
 		else
 		{
 			bIsOverlapping = true;
@@ -72,7 +68,7 @@ void AKatana::BeginPlay()
 void AKatana::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (bIsOverlapping)
+	if (BoxComp->GetCollisionEnabled() != ECollisionEnabled::NoCollision && bIsOverlapping)
 	{
 		if (BoxComp->IsOverlappingActor(Cast<ACombatCharacter>(GetOwner())->GetOpponent()))
 		{

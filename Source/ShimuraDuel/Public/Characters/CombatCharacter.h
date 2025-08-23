@@ -35,6 +35,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bInParryWindow = false;
 
+	UFUNCTION(BlueprintPure)
+	UAnimationAsset* GetCurrentAttackAnimation();
 
 protected:
 	// Called when the game starts or when spawned
@@ -86,6 +88,9 @@ protected:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void FinishDodging();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayRandomMontageSection(UAnimMontage* Montage);
 
 public:
 	// Called every frame

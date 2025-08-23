@@ -148,6 +148,8 @@ void AShimuraPlayer::Move(const FInputActionValue& Value)
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
+
+	//GetMesh()->GetAnimInstance()->GetCurrentActiveMontage()->CompositeSections
 }
 
 void AShimuraPlayer::Look(const FInputActionValue& Value)

@@ -17,6 +17,46 @@ ACombatCharacter::ACombatCharacter()
 	Katana->SetupAttachment(GetMesh(), FName("katana_r"));
 }
 
+UAnimationAsset* ACombatCharacter::GetCurrentAttackAnimation()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (!AnimInstance) return nullptr;
+
+	// Grab the currently active montage instance
+	FAnimMontageInstance* MontageInstance = AnimInstance->GetActiveMontageInstance();
+	if (!MontageInstance || !MontageInstance->Montage) return nullptr;
+
+	UAnimMontage* Montage = MontageInstance->Montage;
+	float CurrentPosition = MontageInstance->GetPosition();
+	
+	// Iterate over all slots in the montage
+	for (const FSlotAnimationTrack& SlotTrack : Montage->SlotAnimTracks)
+	{
+		// Each slot has an AnimTrack, which is made up of segments
+		for (const FAnimSegment& Segment : SlotTrack.AnimTrack.AnimSegments)
+		{
+			if (CurrentPosition >= Segment.StartPos && CurrentPosition < Segment.GetEndPos())
+			{
+				return Segment.GetAnimReference(); // <-- This is the actual animation currently being played
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+void ACombatCharacter::PlayRandomMontageSection(UAnimMontage* Montage)
+{
+	if (!Montage) return;
+	
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	int32 RandIndex = FMath::RandRange(0, Montage->GetNumSections()- 1);
+	FName RandomSection = Montage->GetSectionName(RandIndex);
+	AnimInstance->Montage_Play(Montage);
+	AnimInstance->Montage_JumpToSection(RandomSection);
+}
+
 // Called when the game starts or when spawned
 void ACombatCharacter::BeginPlay()
 {
@@ -30,7 +70,7 @@ void ACombatCharacter::Attack_Implementation()
 	if (CurrentState != EActionState::None) return;
 
 	CurrentState = EActionState::Attack;
-	GetMesh()->GetAnimInstance()->Montage_Play(AttackMontage);
+	PlayRandomMontageSection(AttackMontage);
 }
 
 void ACombatCharacter::FinishSwing_Implementation()
