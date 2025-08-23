@@ -7,5 +7,6 @@ enum class EStance : uint8
 {
 	Stone UMETA(DisplayName = "Stone"),
 	Water UMETA(DisplayName = "Water"),
-	Wind UMETA(DisplayName = "Wind")
+	Wind UMETA(DisplayName = "Wind"),
+	Moon UMETA(DisplayName = "Moon")
 };

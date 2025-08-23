@@ -63,6 +63,8 @@ void ACombatCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	Katana->GetChildActor()->SetOwner(this);
+
+	CurrentStance = EStance::Stone;
 }
 
 void ACombatCharacter::Attack_Implementation()
@@ -70,7 +72,7 @@ void ACombatCharacter::Attack_Implementation()
 	if (CurrentState != EActionState::None) return;
 
 	CurrentState = EActionState::Attack;
-	PlayRandomMontageSection(AttackMontage);
+	PlayRandomMontageSection(StanceAttacks[CurrentStance]);
 }
 
 void ACombatCharacter::FinishSwing_Implementation()

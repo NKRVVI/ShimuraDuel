@@ -59,8 +59,6 @@ void ALordShimura::Tick(float DeltaTime)
 		Rotation.Yaw = LookAtRotation.Yaw;
 		SetActorRotation(Rotation);
 	}
-
-	Attack();
 }
 
 // Called to bind functionality to input
@@ -69,7 +67,7 @@ void ALordShimura::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-ACombatCharacter* ALordShimura::GetOpponent()
+ACombatCharacter* ALordShimura::GetOpponent() const
 {
 	return Opponent;
 }

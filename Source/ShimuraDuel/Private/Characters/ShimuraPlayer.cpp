@@ -120,7 +120,7 @@ void AShimuraPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	}
 }
 
-ACombatCharacter* AShimuraPlayer::GetOpponent()
+ACombatCharacter* AShimuraPlayer::GetOpponent() const
 {
 	return Opponent;
 }

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Utils/Stances.h"
 #include "CombatCharacter.generated.h"
 
 UENUM(Blueprintable)
@@ -37,6 +38,12 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	UAnimationAsset* GetCurrentAttackAnimation();
+
+	UPROPERTY(BlueprintReadWrite)
+	EStance CurrentStance;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TMap<EStance, UAnimMontage*> StanceAttacks;
 
 protected:
 	// Called when the game starts or when spawned
@@ -104,5 +111,5 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE bool IsBlocking() const { return CurrentState == EActionState::Block; }
 	UFUNCTION(BlueprintPure)
-	virtual ACombatCharacter* GetOpponent(){return nullptr;}
+	virtual ACombatCharacter* GetOpponent() const {return nullptr;}
 };

@@ -34,5 +34,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual ACombatCharacter* GetOpponent() override;
+	virtual ACombatCharacter* GetOpponent() const override;
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintPure)
+	FVector GetLocationInRadius(float Rad);
 };
