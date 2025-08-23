@@ -55,15 +55,12 @@ void ALordShimura::Tick(float DeltaTime)
 	if (CurrentState != EActionState::Attack || !Opponent->IsDodging())
 	{
 		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Opponent->GetActorLocation());
-		FRotator ControllerRotation = FMath::Lerp<FRotator, float>(Controller->GetControlRotation(), LookAtRotation, .9f);
-		Controller->SetControlRotation(LookAtRotation);
 		FRotator Rotation = GetActorRotation();
-		Rotation.Yaw = Controller->GetControlRotation().Yaw;
+		Rotation.Yaw = LookAtRotation.Yaw;
 		SetActorRotation(Rotation);
 	}
 
 	Attack();
-	
 }
 
 // Called to bind functionality to input

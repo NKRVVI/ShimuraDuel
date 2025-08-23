@@ -110,6 +110,9 @@ void AShimuraPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		EnhancedInputComponent->BindAction(BlockAction, ETriggerEvent::Started, this, &ThisClass::BlockStart);
 		EnhancedInputComponent->BindAction(BlockAction, ETriggerEvent::Completed, this, &ThisClass::BlockEnd);
+
+		EnhancedInputComponent->BindAction(LightAttackAction, ETriggerEvent::Triggered, this, &ThisClass::LightAttack);
+		EnhancedInputComponent->BindAction(HeavyAttackAction, ETriggerEvent::Triggered, this, &ThisClass::HeavyAttack);
 	}
 	else
 	{
@@ -225,6 +228,20 @@ void AShimuraPlayer::BlockEnd(const FInputActionValue& Value)
 	{
 		CurrentState = EActionState::None;
 	}
+}
+
+void AShimuraPlayer::LightAttack(const FInputActionValue& Value)
+{
+	if (CurrentState != EActionState::None) return;
+
+	Attack();
+}
+
+void AShimuraPlayer::HeavyAttack(const FInputActionValue& Value)
+{
+	if (CurrentState != EActionState::None) return;
+
+	Attack();
 }
 
 void AShimuraPlayer::Tick(float DeltaTime)

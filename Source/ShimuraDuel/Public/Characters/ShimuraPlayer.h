@@ -53,6 +53,12 @@ class AShimuraPlayer : public ACombatCharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* BlockAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* LightAttackAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* HeavyAttackAction;
 	
 
 public:
@@ -76,6 +82,10 @@ protected:
 	void BlockStart(const FInputActionValue& Value);
 
 	void BlockEnd(const FInputActionValue& Value);
+
+	void LightAttack(const FInputActionValue& Value);
+
+	void HeavyAttack(const FInputActionValue& Value);
 
 	virtual void Tick(float DeltaTime) override;
 
@@ -102,4 +112,3 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	virtual ACombatCharacter* GetOpponent() override;
 };
-
