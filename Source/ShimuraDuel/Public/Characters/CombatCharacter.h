@@ -32,6 +32,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void GetHit();
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bInParryWindow = false;
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -52,9 +56,6 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bInMiddleOfSwing = false;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool bIsParriable = false;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Attack();
@@ -77,6 +78,15 @@ protected:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void FinishGetHit();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void InParryWindow();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OutsideParryWindow();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void FinishDodging();
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -89,5 +99,5 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE bool IsBlocking() const { return CurrentState == EActionState::Block; }
 	UFUNCTION(BlueprintPure)
-	virtual ACombatCharacter* GetOppponent(){return nullptr;}
+	virtual ACombatCharacter* GetOpponent(){return nullptr;}
 };

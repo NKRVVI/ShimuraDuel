@@ -4,6 +4,7 @@
 #include "Characters/CombatCharacter.h"
 
 #include "Katana.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 // Sets default values
@@ -45,6 +46,7 @@ void ACombatCharacter::FinishAttacking_Implementation()
 //POST TELEGRAPH
 void ACombatCharacter::StartSwing_Implementation()
 {
+	OutsideParryWindow();
 	Cast<AKatana>(Katana->GetChildActor())->EnableCollision();
 }
 
@@ -54,6 +56,13 @@ void ACombatCharacter::Parry_Implementation()
 	
 	GetMesh()->GetAnimInstance()->Montage_Play(ParryMontage);
 	CurrentState = EActionState::Parry;
+
+	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetOpponent()->GetActorLocation(), GetActorLocation());
+	float Dist = (GetOpponent()->GetActorLocation() - GetActorLocation()).Size();
+	if (GetOpponent()->bInParryWindow && Dist <= 250.f && FMath::IsNearlyEqual(LookAtRotation.Yaw, GetOpponent()->GetActorRotation().Yaw, 10.f))
+	{
+		GetOpponent()->GetHit();
+	}
 }
 
 void ACombatCharacter::FinishParry_Implementation()
@@ -64,10 +73,25 @@ void ACombatCharacter::FinishParry_Implementation()
 void ACombatCharacter::GetHit_Implementation()
 {
 	GetMesh()->GetAnimInstance()->Montage_Play(GetHitMontage);
-	CurrentState = EActionState::GetHit;
+	CurrentState = EActionState::GetHit;	
 }
 
 void ACombatCharacter::FinishGetHit_Implementation()
+{
+	CurrentState = EActionState::None;
+}
+
+void ACombatCharacter::InParryWindow_Implementation()
+{
+	bInParryWindow = true;
+}
+
+void ACombatCharacter::OutsideParryWindow_Implementation()
+{
+	bInParryWindow = false;
+}
+
+void ACombatCharacter::FinishDodging_Implementation()
 {
 	CurrentState = EActionState::None;
 }

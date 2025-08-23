@@ -71,9 +71,9 @@ void AShimuraPlayer::BeginPlay()
 //////////////////////////////////////////////////////////////////////////
 // Input
 
-void AShimuraPlayer::FinishDodging()
+void AShimuraPlayer::FinishDodging_Implementation()
 {
-	CurrentState = EActionState::None;
+	Super::FinishDodging_Implementation();
 	OnDodgeFinished.Broadcast();
 }
 
@@ -117,7 +117,7 @@ void AShimuraPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	}
 }
 
-ACombatCharacter* AShimuraPlayer::GetOppponent()
+ACombatCharacter* AShimuraPlayer::GetOpponent()
 {
 	return Opponent;
 }
@@ -210,22 +210,20 @@ void AShimuraPlayer::Dodge(const FInputActionValue& Value)
 void AShimuraPlayer::BlockStart(const FInputActionValue& Value)
 {
 	if (CurrentState != EActionState::None) return;
-	CurrentState = EActionState::Block;
-	UE_LOG(LogTemp, Warning, TEXT("BlockStart"));
 	BlockTimeBetweenClick = GetWorld()->GetTimeSeconds();
+	bCountBlockTime = true;
 }
 
 void AShimuraPlayer::BlockEnd(const FInputActionValue& Value)
 {
+	bCountBlockTime = false;
 	if (GetWorld()->GetTimeSeconds() - BlockTimeBetweenClick < 0.25f)
 	{
 		Parry();
-		UE_LOG(LogTemp, Warning, TEXT("Parry"));
 	}
 	else
 	{
 		CurrentState = EActionState::None;
-		UE_LOG(LogTemp, Warning, TEXT("BlockEnd"));	
 	}
 }
 
@@ -237,4 +235,13 @@ void AShimuraPlayer::Tick(float DeltaTime)
 	FRotator Rotation = GetActorRotation();
 	Rotation.Yaw = Controller->GetControlRotation().Yaw;
 	SetActorRotation(Rotation);
+
+	if (bCountBlockTime)
+	{
+		if (GetWorld()->GetTimeSeconds() - BlockTimeBetweenClick >= 0.25f)
+		{
+			CurrentState = EActionState::Block;
+			bCountBlockTime = false;
+		}
+	}
 }

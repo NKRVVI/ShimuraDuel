@@ -84,10 +84,10 @@ protected:
 
 	FVector2D MovementVector;
 
-	UFUNCTION(BlueprintCallable)
-	void FinishDodging();
+	virtual void FinishDodging_Implementation() override;
 
 	float BlockTimeBetweenClick = 0.f;
+	bool bCountBlockTime = false;
 
 protected:
 
@@ -100,6 +100,6 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-	virtual ACombatCharacter* GetOppponent() override;
+	virtual ACombatCharacter* GetOpponent() override;
 };
 

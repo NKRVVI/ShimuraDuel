@@ -27,13 +27,18 @@ void AKatana::DisableCollision_Implementation()
 void AKatana::OnHit_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (Cast<ACombatCharacter>(GetOwner())->GetOppponent() == OtherActor)
+	if (Cast<ACombatCharacter>(GetOwner())->GetOpponent() == OtherActor)
 	{
 		ACombatCharacter* Other = Cast<ACombatCharacter>(OtherActor);
 		if (!Other->IsDodging() && !Other->IsBlocking())
 		{
+			UE_LOG(LogTemp, Display, TEXT("GetHit"));
 			Cast<ACombatCharacter>(OtherActor)->GetHit();
 			DisableCollision();	
+		}
+		else if (Other->IsBlocking())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Blocking"));
 		}
 		else
 		{
@@ -45,7 +50,7 @@ void AKatana::OnHit_Implementation(UPrimitiveComponent* OverlappedComponent, AAc
 void AKatana::OnHitEnd_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (Cast<ACombatCharacter>(GetOwner())->GetOppponent() == OtherActor)
+	if (Cast<ACombatCharacter>(GetOwner())->GetOpponent() == OtherActor)
 	{
 		bIsOverlapping = false;
 	}
@@ -69,11 +74,12 @@ void AKatana::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (bIsOverlapping)
 	{
-		if (BoxComp->IsOverlappingActor(Cast<ACombatCharacter>(GetOwner())->GetOppponent()))
+		if (BoxComp->IsOverlappingActor(Cast<ACombatCharacter>(GetOwner())->GetOpponent()))
 		{
-			ACombatCharacter* Opponent = Cast<ACombatCharacter>(GetOwner())->GetOppponent();
+			ACombatCharacter* Opponent = Cast<ACombatCharacter>(GetOwner())->GetOpponent();
 			if (!Opponent->IsDodging() && !Opponent->IsBlocking())
 			{
+				UE_LOG(LogTemp, Display, TEXT("GetHitTick"));
 				Opponent->GetHit();
 				DisableCollision();
 			}
