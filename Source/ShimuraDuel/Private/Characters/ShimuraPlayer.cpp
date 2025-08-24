@@ -94,11 +94,6 @@ void AShimuraPlayer::Attack_Implementation()
 void AShimuraPlayer::Parry_Implementation()
 {
 	Super::Parry_Implementation();
-
-	if (CurrentState == EActionState::Parry)
-	{
-		GetMesh()->GetAnimInstance()->Montage_Play(ParryMontage);
-	}
 }
 
 void AShimuraPlayer::NotifyControllerChanged()

@@ -131,6 +131,6 @@ public:
 	FORCEINLINE bool IsDodging() const { return CurrentState == EActionState::Dodge; }
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE bool IsBlocking() const { return CurrentState == EActionState::Block; }
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure, BlueprintCallable)
 	virtual ACombatCharacter* GetOpponent() const {return nullptr;}
 };
