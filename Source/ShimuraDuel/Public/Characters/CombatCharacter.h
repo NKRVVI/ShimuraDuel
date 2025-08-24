@@ -18,6 +18,17 @@ enum class EActionState : uint8
 	GetHit UMETA(DisplayName = "GetHit")
 };
 
+UENUM(BlueprintType)
+enum EAttackEndType : uint8
+{
+	Success UMETA(DisplayName = "Success"),
+	GetHit UMETA(DisplayName = "GetHit"),
+	Parried UMETA(DisplayName = "Parried"),
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackFinished, EAttackEndType, EndType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBecomeParriable);
+
 UCLASS()
 class SHIMURADUEL_API ACombatCharacter : public ACharacter
 {
@@ -33,6 +44,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void GetHit();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void GetParried();
+
 	UPROPERTY(BlueprintReadWrite)
 	bool bInParryWindow = false;
 
@@ -44,6 +58,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TMap<EStance, UAnimMontage*> StanceAttacks;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FAttackFinished OnAttackFinished;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FBecomeParriable OnBecomeParriable;
 
 protected:
 	// Called when the game starts or when spawned

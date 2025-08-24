@@ -83,6 +83,8 @@ void ACombatCharacter::FinishSwing_Implementation()
 void ACombatCharacter::FinishAttacking_Implementation()
 {
 	CurrentState = EActionState::None;
+	OnAttackFinished.Broadcast(Success);
+
 }
 
 //POST TELEGRAPH
@@ -96,15 +98,15 @@ void ACombatCharacter::Parry_Implementation()
 {
 	if (CurrentState != EActionState::None && CurrentState != EActionState::Block) return;
 	
-	GetMesh()->GetAnimInstance()->Montage_Play(ParryMontage);
 	CurrentState = EActionState::Parry;
 
 	FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetOpponent()->GetActorLocation(), GetActorLocation());
 	float Dist = (GetOpponent()->GetActorLocation() - GetActorLocation()).Size();
 	if (GetOpponent()->bInParryWindow && Dist <= 250.f && FMath::IsNearlyEqual(LookAtRotation.Yaw, GetOpponent()->GetActorRotation().Yaw, 10.f))
 	{
-		GetOpponent()->GetHit();
+		GetOpponent()->GetParried();
 	}
+	GetMesh()->GetAnimInstance()->Montage_Play(ParryMontage);
 }
 
 void ACombatCharacter::FinishParry_Implementation()
@@ -118,6 +120,12 @@ void ACombatCharacter::GetHit_Implementation()
 	CurrentState = EActionState::GetHit;	
 }
 
+void ACombatCharacter::GetParried_Implementation()
+{
+	GetMesh()->GetAnimInstance()->Montage_Play(GetHitMontage);
+	CurrentState = EActionState::GetHit;
+}
+
 void ACombatCharacter::FinishGetHit_Implementation()
 {
 	CurrentState = EActionState::None;
@@ -126,6 +134,7 @@ void ACombatCharacter::FinishGetHit_Implementation()
 void ACombatCharacter::InParryWindow_Implementation()
 {
 	bInParryWindow = true;
+	OnBecomeParriable.Broadcast();
 }
 
 void ACombatCharacter::OutsideParryWindow_Implementation()

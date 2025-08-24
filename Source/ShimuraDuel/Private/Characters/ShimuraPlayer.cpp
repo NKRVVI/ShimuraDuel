@@ -74,7 +74,31 @@ void AShimuraPlayer::BeginPlay()
 void AShimuraPlayer::FinishDodging_Implementation()
 {
 	Super::FinishDodging_Implementation();
-	OnDodgeFinished.Broadcast();
+}
+
+void AShimuraPlayer::FinishAttacking_Implementation()
+{
+	Super::FinishAttacking_Implementation();
+}
+
+void AShimuraPlayer::Attack_Implementation()
+{
+	Super::Attack_Implementation();
+
+	if (CurrentState == EActionState::Attack)
+	{
+		OnActionStarted.Broadcast(CurrentState);
+	}
+}
+
+void AShimuraPlayer::Parry_Implementation()
+{
+	Super::Parry_Implementation();
+
+	if (CurrentState == EActionState::Parry)
+	{
+		GetMesh()->GetAnimInstance()->Montage_Play(ParryMontage);
+	}
 }
 
 void AShimuraPlayer::NotifyControllerChanged()

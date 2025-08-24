@@ -6,17 +6,7 @@
 #include "Characters/CombatCharacter.h"
 #include "LordShimura.generated.h"
 
-UENUM(BlueprintType)
-enum EAttackEndType : uint8
-{
-	Success UMETA(DisplayName = "Success"),
-	GetHit UMETA(DisplayName = "GetHit"),
-	Parried UMETA(DisplayName = "Parried"),
-};
-
 class AShimuraPlayer;
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackFinished, EAttackEndType, EndType);
 
 UCLASS()
 class SHIMURADUEL_API ALordShimura : public ACombatCharacter
@@ -26,9 +16,6 @@ class SHIMURADUEL_API ALordShimura : public ACombatCharacter
 public:
 	// Sets default values for this character's properties
 	ALordShimura();
-
-	UPROPERTY(BlueprintAssignable, BlueprintCallable)
-	FAttackFinished OnAttackFinished;
 
 protected:
 	// Called when the game starts or when spawned
@@ -45,6 +32,23 @@ protected:
 
 	virtual void FinishAttacking_Implementation() override;
 	virtual void GetHit_Implementation() override;
+	virtual void GetParried_Implementation() override;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<float> AttackIntervals = {};
+
+	float NextAttackTime = 0.f;
+	float GetHitTime = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Parry")
+	bool bReadyForParry = false;
+	
+	virtual void Parry_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OnOpponentAttackFinished(EAttackEndType AttackEnd);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OnOpponentAttackStarted(EActionState ActionState);
 
 public:
 	// Called every frame

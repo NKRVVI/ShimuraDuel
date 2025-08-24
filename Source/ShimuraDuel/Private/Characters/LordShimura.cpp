@@ -42,22 +42,73 @@ void ALordShimura::BeginPlay()
 
 void ALordShimura::OnOpponentDodgeFinished_Implementation()
 {
-	Opponent->OnDodgeFinished.RemoveAll(this);
-
 	GetMesh()->GetAnimInstance()->Montage_Resume(AttackMontage);
 }
 
 void ALordShimura::FinishAttacking_Implementation()
 {
 	Super::FinishAttacking_Implementation();
-
-	OnAttackFinished.Broadcast(Success);
 }
 
 void ALordShimura::GetHit_Implementation()
 {
 	Super::GetHit_Implementation();
 	OnAttackFinished.Broadcast(EAttackEndType::GetHit);
+
+	Opponent->OnAttackFinished.AddUniqueDynamic(this, &ThisClass::OnOpponentAttackFinished);
+	Opponent->OnActionStarted.AddUniqueDynamic(this, &ThisClass::OnOpponentAttackStarted);
+}
+
+void ALordShimura::OnOpponentAttackFinished_Implementation(EAttackEndType AttackEnd)
+{
+	GetHitTime = GetWorld()->GetTimeSeconds();
+}
+
+void ALordShimura::OnOpponentAttackStarted_Implementation(EActionState ActionState)
+{
+	if (ActionState == EActionState::Attack)
+	{
+
+		if ((Opponent->GetActorLocation() - GetActorLocation()).Size2D() < 250.f)
+		NextAttackTime = GetWorld()->GetTimeSeconds();
+		AttackIntervals.Add(NextAttackTime - GetHitTime);
+
+		while (AttackIntervals.Num() > 2)
+		{
+			AttackIntervals.RemoveAt(0);
+		}
+		
+		if (AttackIntervals.Num() == 2)
+		{
+			float AverageTime = 0.f;
+			for (float Interval : AttackIntervals)
+			{
+				AverageTime += Interval;
+			}
+			AverageTime /= AttackIntervals.Num();
+
+			if (AverageTime < 0.25f)
+			{
+				bReadyForParry = true;
+				Opponent->OnBecomeParriable.AddDynamic(this, &ThisClass::Parry);
+			}
+		}
+	}
+}
+
+void ALordShimura::GetParried_Implementation()
+{
+	Super::GetParried_Implementation();
+	OnAttackFinished.Broadcast(EAttackEndType::Parried);
+}
+
+void ALordShimura::Parry_Implementation()
+{
+	Super::Parry_Implementation();
+	bReadyForParry = false;
+	AttackIntervals.Empty();
+	Opponent->OnBecomeParriable.RemoveAll(this);
+	Opponent->OnActionStarted.RemoveAll(this);
 }
 
 // Called every frame

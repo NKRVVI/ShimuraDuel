@@ -15,7 +15,7 @@ struct FInputActionValue;
 
 class ALordShimura;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDodgeFinished);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FActionStarted, EActionState, ActionState);
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -66,8 +66,7 @@ public:
 
 	virtual void BeginPlay() override;
 
-	UPROPERTY(BlueprintCallable, BlueprintAssignable)
-	FOnDodgeFinished OnDodgeFinished;
+	FActionStarted OnActionStarted;
 
 protected:
 
@@ -95,6 +94,12 @@ protected:
 	FVector2D MovementVector;
 
 	virtual void FinishDodging_Implementation() override;
+
+	virtual void FinishAttacking_Implementation() override;
+
+	virtual void Attack_Implementation() override;
+
+	virtual void Parry_Implementation() override;
 
 	float BlockTimeBetweenClick = 0.f;
 	bool bCountBlockTime = false;
