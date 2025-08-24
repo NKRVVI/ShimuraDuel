@@ -51,12 +51,13 @@ void ALordShimura::FinishAttacking_Implementation()
 {
 	Super::FinishAttacking_Implementation();
 
-	OnAttackFinished.Broadcast();
+	OnAttackFinished.Broadcast(Success);
 }
 
 void ALordShimura::GetHit_Implementation()
 {
 	Super::GetHit_Implementation();
+	OnAttackFinished.Broadcast(EAttackEndType::GetHit);
 }
 
 // Called every frame

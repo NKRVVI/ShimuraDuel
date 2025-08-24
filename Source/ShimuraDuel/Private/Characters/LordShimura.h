@@ -6,9 +6,17 @@
 #include "Characters/CombatCharacter.h"
 #include "LordShimura.generated.h"
 
+UENUM(BlueprintType)
+enum EAttackEndType : uint8
+{
+	Success UMETA(DisplayName = "Success"),
+	GetHit UMETA(DisplayName = "GetHit"),
+	Parried UMETA(DisplayName = "Parried"),
+};
+
 class AShimuraPlayer;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAttackFinished);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackFinished, EAttackEndType, EndType);
 
 UCLASS()
 class SHIMURADUEL_API ALordShimura : public ACombatCharacter

@@ -32,7 +32,7 @@ void AKatana::OnHit_Implementation(UPrimitiveComponent* OverlappedComponent, AAc
 		ACombatCharacter* Other = Cast<ACombatCharacter>(OtherActor);
 		if (!Other->IsDodging() && !Other->IsBlocking())
 		{
-			UE_LOG(LogTemp, Display, TEXT("GetHit"));
+			//UE_LOG(LogTemp, Display, TEXT("GetHit"));
 			Cast<ACombatCharacter>(OtherActor)->GetHit();
 			DisableCollision();	
 		}
@@ -75,7 +75,7 @@ void AKatana::Tick(float DeltaTime)
 			ACombatCharacter* Opponent = Cast<ACombatCharacter>(GetOwner())->GetOpponent();
 			if (!Opponent->IsDodging() && !Opponent->IsBlocking())
 			{
-				UE_LOG(LogTemp, Display, TEXT("GetHitTick"));
+				//UE_LOG(LogTemp, Display, TEXT("GetHitTick"));
 				Opponent->GetHit();
 				DisableCollision();
 			}

@@ -7,7 +7,7 @@
 #include "Utils/Stances.h"
 #include "CombatCharacter.generated.h"
 
-UENUM(Blueprintable)
+UENUM(BlueprintType)
 enum class EActionState : uint8
 {
 	None UMETA(DisplayName = "None"),
@@ -49,6 +49,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(BlueprintReadWrite)
 	EActionState CurrentState = EActionState::None;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CombatCharacter")
