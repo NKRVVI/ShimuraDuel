@@ -45,6 +45,13 @@ UAnimationAsset* ACombatCharacter::GetCurrentAttackAnimation()
 	return nullptr;
 }
 
+void ACombatCharacter::Dodge_Implementation()
+{
+	if (CurrentState != EActionState::None) return;
+	GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("Back"), DodgeMontage);
+	CurrentState = EActionState::Dodge;
+}
+
 void ACombatCharacter::PlayRandomMontageSection(UAnimMontage* Montage)
 {
 	if (!Montage) return;
@@ -84,7 +91,6 @@ void ACombatCharacter::FinishAttacking_Implementation()
 {
 	CurrentState = EActionState::None;
 	OnAttackFinished.Broadcast(Success);
-
 }
 
 //POST TELEGRAPH

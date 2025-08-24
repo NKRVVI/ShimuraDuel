@@ -38,28 +38,27 @@ void ALordShimura::BeginPlay()
 	{
 		Opponent = Player;
 	}
-}
 
-void ALordShimura::OnOpponentDodgeFinished_Implementation()
-{
-	GetMesh()->GetAnimInstance()->Montage_Resume(AttackMontage);
+	Opponent->OnActionStarted.AddUniqueDynamic(this, &ThisClass::OnOpponentAttackStarted);
+
 }
 
 void ALordShimura::FinishAttacking_Implementation()
 {
 	Super::FinishAttacking_Implementation();
+	AttackEnd = Success;
 }
 
 void ALordShimura::GetHit_Implementation()
 {
 	Super::GetHit_Implementation();
 	OnAttackFinished.Broadcast(EAttackEndType::GetHit);
+	AttackEnd = EAttackEndType::GetHit;
 
 	Opponent->OnAttackFinished.AddUniqueDynamic(this, &ThisClass::OnOpponentAttackFinished);
-	Opponent->OnActionStarted.AddUniqueDynamic(this, &ThisClass::OnOpponentAttackStarted);
 }
 
-void ALordShimura::OnOpponentAttackFinished_Implementation(EAttackEndType AttackEnd)
+void ALordShimura::OnOpponentAttackFinished_Implementation(EAttackEndType CurrentAttackEnd)
 {
 	GetHitTime = GetWorld()->GetTimeSeconds();
 }
@@ -68,6 +67,16 @@ void ALordShimura::OnOpponentAttackStarted_Implementation(EActionState ActionSta
 {
 	if (ActionState == EActionState::Attack)
 	{
+		if (AttackEnd == Success)
+		{
+			if (FMath::RandRange(0.f, 1.f) < 0.15f)
+			{
+				Dodge();
+				AttackIntervals.Empty();
+				Opponent->OnBecomeParriable.RemoveAll(this);
+				return;
+			}
+		}
 
 		if ((Opponent->GetActorLocation() - GetActorLocation()).Size2D() < 250.f)
 		NextAttackTime = GetWorld()->GetTimeSeconds();
@@ -100,6 +109,7 @@ void ALordShimura::GetParried_Implementation()
 {
 	Super::GetParried_Implementation();
 	OnAttackFinished.Broadcast(EAttackEndType::Parried);
+	AttackEnd = Parried;
 }
 
 void ALordShimura::Parry_Implementation()
@@ -108,7 +118,6 @@ void ALordShimura::Parry_Implementation()
 	bReadyForParry = false;
 	AttackIntervals.Empty();
 	Opponent->OnBecomeParriable.RemoveAll(this);
-	Opponent->OnActionStarted.RemoveAll(this);
 }
 
 // Called every frame
@@ -135,4 +144,3 @@ ACombatCharacter* ALordShimura::GetOpponent() const
 {
 	return Opponent;
 }
-

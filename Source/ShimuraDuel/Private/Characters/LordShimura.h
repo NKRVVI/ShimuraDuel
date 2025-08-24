@@ -21,9 +21,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void OnOpponentDodgeFinished();
-
 	UPROPERTY(BlueprintReadWrite)
 	AShimuraPlayer* Opponent;
 
@@ -45,7 +42,7 @@ protected:
 	virtual void Parry_Implementation() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void OnOpponentAttackFinished(EAttackEndType AttackEnd);
+	void OnOpponentAttackFinished(EAttackEndType CurrentAttackEnd);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnOpponentAttackStarted(EActionState ActionState);
@@ -61,4 +58,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintPure)
 	FVector GetLocationInRadius(float Rad);
+
+	UPROPERTY(BlueprintReadOnly)
+	TEnumAsByte<EAttackEndType> AttackEnd;
 };

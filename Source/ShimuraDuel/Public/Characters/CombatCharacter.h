@@ -117,6 +117,9 @@ protected:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void FinishDodging();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void Dodge();
+
 	UFUNCTION(BlueprintCallable)
 	void PlayRandomMontageSection(UAnimMontage* Montage);
 
