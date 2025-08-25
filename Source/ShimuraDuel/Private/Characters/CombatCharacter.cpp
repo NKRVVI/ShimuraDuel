@@ -74,6 +74,7 @@ void ACombatCharacter::Dodge_Implementation()
 void ACombatCharacter::OnWeaponHitOpponent()
 {
 	FAnimationInfo AnimInfo = AShimuraDuelGameMode::GetInstance()->GetAnimationInfo(GetCurrentAttackAnimation());
+	check(AnimInfo.Damage > 0.f);
 	if (!GetOpponent()->IsDodging() && (!GetOpponent()->IsBlocking() || !AnimInfo.bIsDefendable))
 	{
 		//UE_LOG(LogTemp, Display, TEXT("GetHit"));

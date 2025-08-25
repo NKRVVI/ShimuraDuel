@@ -58,7 +58,7 @@ class AShimuraPlayer : public ACombatCharacter
 	UInputAction* LightAttackAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* HeavyAttackAction;
+	UInputAction* ChangeStanceAction;
 	
 
 public:
@@ -84,7 +84,7 @@ protected:
 
 	void LightAttack(const FInputActionValue& Value);
 
-	void HeavyAttack(const FInputActionValue& Value);
+	void ChangeStance(const FInputActionValue& Value);
 
 	virtual void Tick(float DeltaTime) override;
 
