@@ -79,27 +79,29 @@ void ALordShimura::OnOpponentAttackStarted_Implementation(EActionState ActionSta
 		}
 
 		if ((Opponent->GetActorLocation() - GetActorLocation()).Size2D() < 250.f)
-		NextAttackTime = GetWorld()->GetTimeSeconds();
-		AttackIntervals.Add(NextAttackTime - GetHitTime);
+		{
+			NextAttackTime = GetWorld()->GetTimeSeconds();
+			AttackIntervals.Add(NextAttackTime - GetHitTime);
 
-		while (AttackIntervals.Num() > 2)
-		{
-			AttackIntervals.RemoveAt(0);
-		}
-		
-		if (AttackIntervals.Num() == 2)
-		{
-			float AverageTime = 0.f;
-			for (float Interval : AttackIntervals)
+			while (AttackIntervals.Num() > 2)
 			{
-				AverageTime += Interval;
+				AttackIntervals.RemoveAt(0);
 			}
-			AverageTime /= AttackIntervals.Num();
-
-			if (AverageTime < 0.25f)
+			
+			if (AttackIntervals.Num() == 2)
 			{
-				bReadyForParry = true;
-				Opponent->OnBecomeParriable.AddDynamic(this, &ThisClass::Parry);
+				float AverageTime = 0.f;
+				for (float Interval : AttackIntervals)
+				{
+					AverageTime += Interval;
+				}
+				AverageTime /= AttackIntervals.Num();
+
+				if (AverageTime < 0.25f)
+				{
+					bReadyForParry = true;
+					Opponent->OnBecomeParriable.AddDynamic(this, &ThisClass::Parry);
+				}
 			}
 		}
 	}

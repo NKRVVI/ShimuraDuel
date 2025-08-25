@@ -6,6 +6,7 @@
 #include "AttributeComponent.h"
 #include "Katana.h"
 #include "ShimuraDuelGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -38,10 +39,13 @@ void ACombatCharacter::GetStaggerHit_Implementation(float Damage)
 
 void ACombatCharacter::PlayParryEffect_Implementation()
 {
+	if (!bPlayParryEffect) return;
+	
 	if (AKatana* Sword = Cast<AKatana>(Katana->GetChildActor()))
 	{
 		Sword->PlayParryEffect();
 	}
+	UGameplayStatics::SetGlobalTimeDilation(this, 0.25f);
 }
 
 UAnimationAsset* ACombatCharacter::GetCurrentAttackAnimation()
@@ -168,6 +172,7 @@ void ACombatCharacter::FinishParry_Implementation()
 {
 	CurrentState = EActionState::None;
 	bPlayParryEffect = false;
+	UGameplayStatics::SetGlobalTimeDilation(this, 1.f);
 }
 
 void ACombatCharacter::GetHit_Implementation(float Damage, FVector ImpactPoint)
