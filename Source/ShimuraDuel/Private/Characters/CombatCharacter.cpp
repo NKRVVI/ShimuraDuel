@@ -30,6 +30,10 @@ void ACombatCharacter::GetStaggerHit_Implementation(float Damage)
 		GetHit(50.f, FVector(0, 0, 0));
 		AttributeComponent->AddOrRemovePosture(100.f);
 		CurrentState = EActionState::None;
+		if (GetOpponent()->bInImpactWindow)
+		{
+			PlayCameraShake();
+		}
 	}
 	else
 	{
@@ -92,6 +96,10 @@ void ACombatCharacter::OnWeaponHitOpponent(FVector ImpactPoint)
 		//UE_LOG(LogTemp, Display, TEXT("GetHit"));
 		GetOpponent()->GetHit(AnimInfo.Damage, ImpactPoint);
 		Cast<AKatana>(Katana->GetChildActor())->DisableCollision();
+		if (bInImpactWindow)
+		{
+			PlayCameraShake();
+		}
 	}
 	else if (GetOpponent()->IsBlocking())
 	{
@@ -143,6 +151,7 @@ void ACombatCharacter::FinishAttacking_Implementation()
 {
 	CurrentState = EActionState::None;
 	OnAttackFinished.Broadcast(Success);
+	bInImpactWindow = false;
 }
 
 //POST TELEGRAPH

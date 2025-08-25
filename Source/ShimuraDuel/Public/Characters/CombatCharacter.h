@@ -55,11 +55,17 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void PlayParryEffect();
 
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void PlayCameraShake();
+
 	UPROPERTY(BlueprintReadOnly)
 	bool bPlayParryEffect = false;
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bInParryWindow = false;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bInImpactWindow = false;
 
 	UFUNCTION(BlueprintPure)
 	UAnimationAsset* GetCurrentAttackAnimation();
@@ -156,4 +162,6 @@ public:
 	FORCEINLINE bool IsBlocking() const { return CurrentState == EActionState::Block; }
 	UFUNCTION(BlueprintPure, BlueprintCallable)
 	virtual ACombatCharacter* GetOpponent() const {return nullptr;}
+	UFUNCTION(BlueprintCallable)
+	void SetInImpactWindow(bool NewInImpactWindow) {bInImpactWindow = NewInImpactWindow;}
 };
