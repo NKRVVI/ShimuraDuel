@@ -25,7 +25,7 @@ void UAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void UAttributeComponent::SetPosture(float NewPosture)
 {
-	CurrentPosture = FMath::Clamp(CurrentPosture + NewPosture, 0.F, MaxPosture);
+	CurrentPosture = FMath::Clamp(NewPosture, 0.F, MaxPosture);
 }
 
 void UAttributeComponent::AddOrRemovePosture_Implementation(float Increment)
@@ -40,6 +40,6 @@ void UAttributeComponent::AddOrRemoveHealth_Implementation(float Increment)
 
 void UAttributeComponent::SetHealth(float NewHealth)
 {
-	CurrentHealth = FMath::Clamp(CurrentHealth + NewHealth, 0, MaxHealth);
+	CurrentHealth = FMath::Clamp(NewHealth, 0, MaxHealth);
 }
 

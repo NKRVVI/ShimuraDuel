@@ -5,6 +5,8 @@
 
 #include "AttributeComponent.h"
 #include "Katana.h"
+#include "ShimuraDuelGameMode.h"
+#include "AI/NavigationSystemBase.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -57,11 +59,16 @@ void ACombatCharacter::Dodge_Implementation()
 
 void ACombatCharacter::OnWeaponHitOpponent()
 {
-	if (!GetOpponent()->IsDodging() && !GetOpponent()->IsBlocking())
+	FAnimationInfo AnimInfo = AShimuraDuelGameMode::GetInstance()->GetAnimationInfo(GetCurrentAttackAnimation());
+	if (!GetOpponent()->IsDodging() && (!GetOpponent()->IsBlocking() || !AnimInfo.bIsDefendable))
 	{
 		//UE_LOG(LogTemp, Display, TEXT("GetHit"));
-		GetOpponent()->GetHit();
+		GetOpponent()->GetHit(AnimInfo.Damage);
 		Cast<AKatana>(Katana->GetChildActor())->DisableCollision();
+	}
+	else if (GetOpponent()->IsBlocking())
+	{
+		float StaggerDamage = AnimInfo.StaggerDamage;
 	}
 	else
 	{
@@ -138,10 +145,11 @@ void ACombatCharacter::FinishParry_Implementation()
 	CurrentState = EActionState::None;
 }
 
-void ACombatCharacter::GetHit_Implementation()
+void ACombatCharacter::GetHit_Implementation(float Damage)
 {
 	GetMesh()->GetAnimInstance()->Montage_Play(GetHitMontage);
-	CurrentState = EActionState::GetHit;	
+	CurrentState = EActionState::GetHit;
+	AttributeComponent->AddOrRemoveHealth(-Damage);
 }
 
 void ACombatCharacter::GetParried_Implementation()

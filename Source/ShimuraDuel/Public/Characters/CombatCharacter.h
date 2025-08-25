@@ -44,7 +44,7 @@ public:
 	UChildActorComponent* Katana;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void GetHit();
+	void GetHit(float Damage);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void GetParried();
