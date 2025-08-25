@@ -36,6 +36,14 @@ void ACombatCharacter::GetStaggerHit_Implementation(float Damage)
 	}
 }
 
+void ACombatCharacter::PlayParryEffect_Implementation()
+{
+	if (AKatana* Sword = Cast<AKatana>(Katana->GetChildActor()))
+	{
+		Sword->PlayParryEffect();
+	}
+}
+
 UAnimationAsset* ACombatCharacter::GetCurrentAttackAnimation()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
@@ -151,6 +159,7 @@ void ACombatCharacter::Parry_Implementation()
 	if (GetOpponent()->bInParryWindow && Dist <= 250.f && FMath::IsNearlyEqual(LookAtRotation.Yaw, GetOpponent()->GetActorRotation().Yaw, 10.f))
 	{
 		GetOpponent()->GetParried();
+		bPlayParryEffect = true;
 	}
 	GetMesh()->GetAnimInstance()->Montage_Play(ParryMontage);
 }
@@ -158,6 +167,7 @@ void ACombatCharacter::Parry_Implementation()
 void ACombatCharacter::FinishParry_Implementation()
 {
 	CurrentState = EActionState::None;
+	bPlayParryEffect = false;
 }
 
 void ACombatCharacter::GetHit_Implementation(float Damage, FVector ImpactPoint)

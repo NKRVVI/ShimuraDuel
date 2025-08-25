@@ -52,6 +52,12 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void GetParried();
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void PlayParryEffect();
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bPlayParryEffect = false;
+
 	UPROPERTY(BlueprintReadWrite)
 	bool bInParryWindow = false;
 
