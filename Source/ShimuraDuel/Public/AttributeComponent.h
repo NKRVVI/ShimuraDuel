@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "AttributeComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float, HealthPercent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPostureChanged, float, PosturePercent);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SHIMURADUEL_API UAttributeComponent : public UActorComponent
@@ -15,6 +17,12 @@ class SHIMURADUEL_API UAttributeComponent : public UActorComponent
 public:
 	// Sets default values for this component's properties
 	UAttributeComponent();
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnHealthChanged OnHealthChanged;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnPostureChanged OnPostureChanged;
 
 protected:
 	// Called when the game starts
@@ -53,5 +61,9 @@ public:
 	float GetHealth() {return CurrentHealth;}
 	UFUNCTION(BlueprintPure)
 	float GetPosture() {return CurrentPosture;}
+	UFUNCTION(BlueprintPure)
+	float GetMaxHealth() {return MaxHealth;}
+	UFUNCTION(BlueprintPure)
+	float GetMaxPosture() {return MaxPosture;}
 	
 };
