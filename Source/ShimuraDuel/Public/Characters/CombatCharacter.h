@@ -47,6 +47,9 @@ public:
 	void GetHit(float Damage);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void GetStaggerHit(float Damage);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void GetParried();
 
 	UPROPERTY(BlueprintReadWrite)
@@ -63,6 +66,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FAttackFinished OnAttackFinished;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UAnimMontage* StaggerHitMontage;
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FBecomeParriable OnBecomeParriable;

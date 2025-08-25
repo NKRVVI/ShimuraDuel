@@ -6,7 +6,6 @@
 #include "AttributeComponent.h"
 #include "Katana.h"
 #include "ShimuraDuelGameMode.h"
-#include "AI/NavigationSystemBase.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -20,6 +19,21 @@ ACombatCharacter::ACombatCharacter()
 	Katana->SetupAttachment(GetMesh(), FName("katana_r"));
 
 	AttributeComponent = CreateDefaultSubobject<UAttributeComponent>("Attributes");
+}
+
+void ACombatCharacter::GetStaggerHit_Implementation(float Damage)
+{
+	AttributeComponent->AddOrRemovePosture(-Damage);
+	if (AttributeComponent->GetPosture() <= 0)
+	{
+		GetHit(50.f);
+		AttributeComponent->AddOrRemovePosture(100.f);
+		CurrentState = EActionState::None;
+	}
+	else
+	{
+		PlayRandomMontageSection(StaggerHitMontage);
+	}
 }
 
 UAnimationAsset* ACombatCharacter::GetCurrentAttackAnimation()
@@ -68,7 +82,7 @@ void ACombatCharacter::OnWeaponHitOpponent()
 	}
 	else if (GetOpponent()->IsBlocking())
 	{
-		float StaggerDamage = AnimInfo.StaggerDamage;
+		GetOpponent()->GetStaggerHit(AnimInfo.StaggerDamage);
 	}
 	else
 	{
