@@ -7,6 +7,8 @@
 #include "Utils/Stances.h"
 #include "CombatCharacter.generated.h"
 
+class UAttributeComponent;
+
 UENUM(BlueprintType)
 enum class EActionState : uint8
 {
@@ -65,6 +67,9 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FBecomeParriable OnBecomeParriable;
 
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly)
+	UAttributeComponent* AttributeComponent;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -122,6 +127,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void PlayRandomMontageSection(UAnimMontage* Montage);
+
+	UFUNCTION()
+	void OnWeaponHitOpponent();
 
 public:
 	// Called every frame

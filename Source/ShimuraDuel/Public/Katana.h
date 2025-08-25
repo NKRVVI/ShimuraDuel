@@ -8,6 +8,8 @@
 
 class UBoxComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHitOpponent);
+
 UCLASS()
 class SHIMURADUEL_API AKatana : public AActor
 {
@@ -34,6 +36,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnHitEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FHitOpponent OnHitOpponent;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

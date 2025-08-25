@@ -29,17 +29,7 @@ void AKatana::OnHit_Implementation(UPrimitiveComponent* OverlappedComponent, AAc
 {
 	if (Cast<ACombatCharacter>(GetOwner())->GetOpponent() == OtherActor)
 	{
-		ACombatCharacter* Other = Cast<ACombatCharacter>(OtherActor);
-		if (!Other->IsDodging() && !Other->IsBlocking())
-		{
-			//UE_LOG(LogTemp, Display, TEXT("GetHit"));
-			Cast<ACombatCharacter>(OtherActor)->GetHit();
-			DisableCollision();	
-		}
-		else
-		{
-			bIsOverlapping = true;
-		}
+		OnHitOpponent.Broadcast();
 	}
 }
 
@@ -72,13 +62,14 @@ void AKatana::Tick(float DeltaTime)
 	{
 		if (BoxComp->IsOverlappingActor(Cast<ACombatCharacter>(GetOwner())->GetOpponent()))
 		{
-			ACombatCharacter* Opponent = Cast<ACombatCharacter>(GetOwner())->GetOpponent();
+			OnHitOpponent.Broadcast();
+			/*ACombatCharacter* Opponent = Cast<ACombatCharacter>(GetOwner())->GetOpponent();
 			if (!Opponent->IsDodging() && !Opponent->IsBlocking())
 			{
 				//UE_LOG(LogTemp, Display, TEXT("GetHitTick"));
 				Opponent->GetHit();
 				DisableCollision();
-			}
+			}*/
 		}
 	}
 }

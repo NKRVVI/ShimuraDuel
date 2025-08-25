@@ -3,6 +3,7 @@
 
 #include "Characters/CombatCharacter.h"
 
+#include "AttributeComponent.h"
 #include "Katana.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -15,6 +16,8 @@ ACombatCharacter::ACombatCharacter()
 
 	Katana = CreateDefaultSubobject<UChildActorComponent>("Katana");
 	Katana->SetupAttachment(GetMesh(), FName("katana_r"));
+
+	AttributeComponent = CreateDefaultSubobject<UAttributeComponent>("Attributes");
 }
 
 UAnimationAsset* ACombatCharacter::GetCurrentAttackAnimation()
@@ -52,6 +55,20 @@ void ACombatCharacter::Dodge_Implementation()
 	CurrentState = EActionState::Dodge;
 }
 
+void ACombatCharacter::OnWeaponHitOpponent()
+{
+	if (!GetOpponent()->IsDodging() && !GetOpponent()->IsBlocking())
+	{
+		//UE_LOG(LogTemp, Display, TEXT("GetHit"));
+		GetOpponent()->GetHit();
+		Cast<AKatana>(Katana->GetChildActor())->DisableCollision();
+	}
+	else
+	{
+		Cast<AKatana>(Katana->GetChildActor())->bIsOverlapping = true;
+	}
+}
+
 void ACombatCharacter::PlayRandomMontageSection(UAnimMontage* Montage)
 {
 	if (!Montage) return;
@@ -70,6 +87,7 @@ void ACombatCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	Katana->GetChildActor()->SetOwner(this);
+	Cast<AKatana>(Katana->GetChildActor())->OnHitOpponent.AddDynamic(this, &ThisClass::OnWeaponHitOpponent);
 
 	CurrentStance = EStance::Stone;
 }
