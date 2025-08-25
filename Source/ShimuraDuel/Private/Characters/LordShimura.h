@@ -28,7 +28,7 @@ protected:
 	bool bRunning = false;
 
 	virtual void FinishAttacking_Implementation() override;
-	virtual void GetHit_Implementation(float Damage) override;
+	virtual void GetHit_Implementation(float Damage, FVector ImpactPoint) override;
 	virtual void GetParried_Implementation() override;
 
 	UPROPERTY(BlueprintReadOnly)

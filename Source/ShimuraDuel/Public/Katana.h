@@ -8,7 +8,7 @@
 
 class UBoxComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHitOpponent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHitOpponent, FVector, ImpactPoint);
 
 UCLASS()
 class SHIMURADUEL_API AKatana : public AActor
@@ -18,6 +18,7 @@ class SHIMURADUEL_API AKatana : public AActor
 public:
 	// Sets default values for this actor's properties
 	AKatana();
+	void LineTraceHitActor(AActor* OtherActor);
 
 	UBoxComponent* BoxComp;
 
@@ -39,6 +40,18 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FHitOpponent OnHitOpponent;
+
+	UPROPERTY(EditAnywhere)
+	USceneComponent* BoxCompStart;
+
+	UPROPERTY(EditAnywhere)
+	USceneComponent* BoxCompEnd;
+
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* KatanaMesh;
+
+	UPROPERTY(EditDefaultsOnly)
+	FVector BoxTraceExtent = FVector(5.f);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

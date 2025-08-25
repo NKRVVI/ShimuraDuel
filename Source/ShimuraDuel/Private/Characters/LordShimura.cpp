@@ -49,9 +49,9 @@ void ALordShimura::FinishAttacking_Implementation()
 	AttackEnd = Success;
 }
 
-void ALordShimura::GetHit_Implementation(float Damage)
+void ALordShimura::GetHit_Implementation(float Damage, FVector ImpactPoint)
 {
-	Super::GetHit_Implementation(Damage);
+	Super::GetHit_Implementation(Damage, ImpactPoint);
 	OnAttackFinished.Broadcast(EAttackEndType::GetHit);
 	AttackEnd = EAttackEndType::GetHit;
 

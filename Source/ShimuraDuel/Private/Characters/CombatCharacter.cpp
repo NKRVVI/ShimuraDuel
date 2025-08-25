@@ -26,7 +26,7 @@ void ACombatCharacter::GetStaggerHit_Implementation(float Damage)
 	AttributeComponent->AddOrRemovePosture(-Damage);
 	if (AttributeComponent->GetPosture() <= 0)
 	{
-		GetHit(50.f);
+		GetHit(50.f, FVector(0, 0, 0));
 		AttributeComponent->AddOrRemovePosture(100.f);
 		CurrentState = EActionState::None;
 	}
@@ -71,14 +71,14 @@ void ACombatCharacter::Dodge_Implementation()
 	CurrentState = EActionState::Dodge;
 }
 
-void ACombatCharacter::OnWeaponHitOpponent()
+void ACombatCharacter::OnWeaponHitOpponent(FVector ImpactPoint)
 {
 	FAnimationInfo AnimInfo = AShimuraDuelGameMode::GetInstance()->GetAnimationInfo(GetCurrentAttackAnimation());
 	check(AnimInfo.Damage > 0.f);
 	if (!GetOpponent()->IsDodging() && (!GetOpponent()->IsBlocking() || !AnimInfo.bIsDefendable))
 	{
 		//UE_LOG(LogTemp, Display, TEXT("GetHit"));
-		GetOpponent()->GetHit(AnimInfo.Damage);
+		GetOpponent()->GetHit(AnimInfo.Damage, ImpactPoint);
 		Cast<AKatana>(Katana->GetChildActor())->DisableCollision();
 	}
 	else if (GetOpponent()->IsBlocking())
@@ -160,7 +160,7 @@ void ACombatCharacter::FinishParry_Implementation()
 	CurrentState = EActionState::None;
 }
 
-void ACombatCharacter::GetHit_Implementation(float Damage)
+void ACombatCharacter::GetHit_Implementation(float Damage, FVector ImpactPoint)
 {
 	GetMesh()->GetAnimInstance()->Montage_Play(GetHitMontage);
 	CurrentState = EActionState::GetHit;

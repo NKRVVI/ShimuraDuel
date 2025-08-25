@@ -5,6 +5,7 @@
 
 #include "Characters/CombatCharacter.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -12,6 +13,15 @@ AKatana::AKatana()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	KatanaMesh = CreateDefaultSubobject<UStaticMeshComponent>("KatanaMesh");
+	SetRootComponent(KatanaMesh);
+	
+	BoxCompStart = CreateDefaultSubobject<USceneComponent>("BoxCompStart");
+	BoxCompStart->SetupAttachment(GetRootComponent());
+
+	BoxCompEnd = CreateDefaultSubobject<USceneComponent>("BoxCompEnd");
+	BoxCompEnd->SetupAttachment(GetRootComponent());
 }
 
 void AKatana::EnableCollision_Implementation()
@@ -24,12 +34,29 @@ void AKatana::DisableCollision_Implementation()
 	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+void AKatana::LineTraceHitActor(AActor* OtherActor)
+{
+	FVector StartPos = BoxCompStart->GetComponentLocation();
+	FVector EndPos = BoxCompEnd->GetComponentLocation();
+
+	TArray<AActor*> IgnoredActors = {};
+	IgnoredActors.Add(GetOwner());
+	IgnoredActors.Add(Cast<ACombatCharacter>(Cast<ACombatCharacter>(OtherActor)->GetOpponent())->Katana->GetChildActor());
+
+	FHitResult Hit;
+		
+	if (UKismetSystemLibrary::BoxTraceSingle(this, StartPos, EndPos, BoxTraceExtent, BoxCompStart->GetComponentRotation(), UEngineTypes::ConvertToTraceType(ECC_Pawn), true, IgnoredActors, EDrawDebugTrace::None, Hit, true))
+	{
+		OnHitOpponent.Broadcast(Hit.ImpactPoint);
+	}
+}
+
 void AKatana::OnHit_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-	bool bFromSweep, const FHitResult& SweepResult)
+                                   bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (Cast<ACombatCharacter>(GetOwner())->GetOpponent() == OtherActor)
 	{
-		OnHitOpponent.Broadcast();
+		LineTraceHitActor(OtherActor);
 	}
 }
 
@@ -62,7 +89,7 @@ void AKatana::Tick(float DeltaTime)
 	{
 		if (BoxComp->IsOverlappingActor(Cast<ACombatCharacter>(GetOwner())->GetOpponent()))
 		{
-			OnHitOpponent.Broadcast();
+			LineTraceHitActor(Cast<ACombatCharacter>(GetOwner())->GetOpponent());
 			/*ACombatCharacter* Opponent = Cast<ACombatCharacter>(GetOwner())->GetOpponent();
 			if (!Opponent->IsDodging() && !Opponent->IsBlocking())
 			{

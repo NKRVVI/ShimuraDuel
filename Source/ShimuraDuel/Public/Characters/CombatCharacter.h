@@ -44,7 +44,7 @@ public:
 	UChildActorComponent* Katana;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void GetHit(float Damage);
+	void GetHit(float Damage, FVector ImpactPoint);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void GetStaggerHit(float Damage);
@@ -135,7 +135,7 @@ protected:
 	void PlayRandomMontageSection(UAnimMontage* Montage);
 
 	UFUNCTION()
-	void OnWeaponHitOpponent();
+	void OnWeaponHitOpponent(FVector ImpactPoint);
 
 public:
 	// Called every frame
