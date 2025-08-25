@@ -267,6 +267,7 @@ void AShimuraPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (IsDead()) return;
 	Controller->SetControlRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Opponent->GetActorLocation()));
 	FRotator Rotation = GetActorRotation();
 	Rotation.Yaw = Controller->GetControlRotation().Yaw;

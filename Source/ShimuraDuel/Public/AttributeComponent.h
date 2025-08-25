@@ -8,6 +8,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float, HealthPercent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPostureChanged, float, PosturePercent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDead);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SHIMURADUEL_API UAttributeComponent : public UActorComponent
@@ -23,6 +24,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnPostureChanged OnPostureChanged;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FDead OnDead;
 
 protected:
 	// Called when the game starts

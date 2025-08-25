@@ -17,7 +17,8 @@ enum class EActionState : uint8
 	Dodge UMETA(DisplayName = "Dodge"),
 	Block UMETA(DisplayName = "Block"),
 	Parry UMETA(DisplayName = "Parry"),
-	GetHit UMETA(DisplayName = "GetHit")
+	GetHit UMETA(DisplayName = "GetHit"),
+	Dead UMETA(DisplayName = "Dead")
 };
 
 UENUM(BlueprintType)
@@ -107,6 +108,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CombatCharacter")
 	UAnimMontage* GetHitMontage;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CombatCharacter")
+	UAnimMontage* DeathMontage;
+
 	UPROPERTY(BlueprintReadWrite)
 	bool bInMiddleOfSwing = false;
 
@@ -149,6 +153,9 @@ protected:
 	UFUNCTION()
 	void OnWeaponHitOpponent(FVector ImpactPoint);
 
+	UFUNCTION(BlueprintNativeEvent)
+	void OnDead();
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -164,4 +171,6 @@ public:
 	virtual ACombatCharacter* GetOpponent() const {return nullptr;}
 	UFUNCTION(BlueprintCallable)
 	void SetInImpactWindow(bool NewInImpactWindow) {bInImpactWindow = NewInImpactWindow;}
+	UFUNCTION(BlueprintPure)
+	bool IsDead() {return CurrentState == EActionState::Dead;}
 };

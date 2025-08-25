@@ -47,6 +47,8 @@ protected:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnOpponentAttackStarted(EActionState ActionState);
 
+	virtual void OnDead_Implementation() override;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

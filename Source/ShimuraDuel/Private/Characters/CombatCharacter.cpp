@@ -111,6 +111,12 @@ void ACombatCharacter::OnWeaponHitOpponent(FVector ImpactPoint)
 	}
 }
 
+void ACombatCharacter::OnDead_Implementation()
+{
+	CurrentState = EActionState::Dead;
+	GetMesh()->GetAnimInstance()->Montage_Play(DeathMontage);
+}
+
 void ACombatCharacter::PlayRandomMontageSection(UAnimMontage* Montage)
 {
 	if (!Montage) return;
@@ -132,6 +138,8 @@ void ACombatCharacter::BeginPlay()
 	Cast<AKatana>(Katana->GetChildActor())->OnHitOpponent.AddDynamic(this, &ThisClass::OnWeaponHitOpponent);
 
 	CurrentStance = EStance::Stone;
+
+	AttributeComponent->OnDead.AddDynamic(this, &ACombatCharacter::OnDead);
 }
 
 void ACombatCharacter::Attack_Implementation()
@@ -186,6 +194,7 @@ void ACombatCharacter::FinishParry_Implementation()
 
 void ACombatCharacter::GetHit_Implementation(float Damage, FVector ImpactPoint)
 {
+	if (IsDead()) return;
 	GetMesh()->GetAnimInstance()->Montage_Play(GetHitMontage);
 	CurrentState = EActionState::GetHit;
 	AttributeComponent->AddOrRemoveHealth(-Damage);
@@ -199,7 +208,10 @@ void ACombatCharacter::GetParried_Implementation()
 
 void ACombatCharacter::FinishGetHit_Implementation()
 {
-	CurrentState = EActionState::None;
+	if (!IsDead())
+	{
+		CurrentState = EActionState::None;
+	}
 }
 
 void ACombatCharacter::InParryWindow_Implementation()

@@ -122,11 +122,21 @@ void ALordShimura::Parry_Implementation()
 	Opponent->OnBecomeParriable.RemoveAll(this);
 }
 
+void ALordShimura::OnDead_Implementation()
+{
+	Super::OnDead_Implementation();
+
+	Opponent->OnBecomeParriable.RemoveAll(this);
+	Opponent->OnAttackFinished.RemoveAll(this);
+	Opponent->OnActionStarted.RemoveAll(this);
+}
+
 // Called every frame
 void ALordShimura::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (IsDead()) return;
 	if (CurrentState != EActionState::Attack || !Opponent->IsDodging())
 	{
 		FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Opponent->GetActorLocation());

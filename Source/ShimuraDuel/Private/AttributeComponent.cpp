@@ -43,5 +43,9 @@ void UAttributeComponent::SetHealth(float NewHealth)
 {
 	CurrentHealth = FMath::Clamp(NewHealth, 0, MaxHealth);
 	OnHealthChanged.Broadcast(NewHealth / MaxHealth);
+	if (CurrentHealth == 0.f)
+	{
+		OnDead.Broadcast();
+	}
 }
 
