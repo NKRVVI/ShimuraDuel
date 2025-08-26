@@ -234,6 +234,7 @@ void AShimuraPlayer::Dodge(const FInputActionValue& Value)
 void AShimuraPlayer::BlockStart(const FInputActionValue& Value)
 {
 	if (CurrentState != EActionState::None) return;
+	if (bParried) return;
 	BlockTimeBetweenClick = GetWorld()->GetTimeSeconds();
 	bCountBlockTime = true;
 }

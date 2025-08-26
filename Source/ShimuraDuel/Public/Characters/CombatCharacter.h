@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AttributeComponent.h"
 #include "GameFramework/Character.h"
 #include "Utils/Stances.h"
 #include "CombatCharacter.generated.h"
@@ -52,6 +53,12 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void GetParried();
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bParried = false;
+	FTimerHandle ParriedTimer;
+	UFUNCTION()
+	void RecoverFromParry() {bParried = false;}
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void PlayParryEffect();
@@ -172,5 +179,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetInImpactWindow(bool NewInImpactWindow) {bInImpactWindow = NewInImpactWindow;}
 	UFUNCTION(BlueprintPure)
-	bool IsDead() {return CurrentState == EActionState::Dead;}
+	bool IsDead() {return CurrentState == EActionState::Dead || AttributeComponent->GetHealth() == 0.f;}
 };

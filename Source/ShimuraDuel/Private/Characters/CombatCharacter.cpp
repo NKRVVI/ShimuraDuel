@@ -27,7 +27,7 @@ void ACombatCharacter::GetStaggerHit_Implementation(float Damage)
 	AttributeComponent->AddOrRemovePosture(-Damage);
 	if (AttributeComponent->GetPosture() <= 0)
 	{
-		GetHit(50.f, FVector(0, 0, 0));
+		GetHit(AttributeComponent->GetMaxHealth() / 2.f, FVector(0, 0, 0));
 		AttributeComponent->AddOrRemovePosture(100.f);
 		CurrentState = EActionState::None;
 		if (GetOpponent()->bInImpactWindow)
@@ -82,7 +82,7 @@ UAnimationAsset* ACombatCharacter::GetCurrentAttackAnimation()
 
 void ACombatCharacter::Dodge_Implementation()
 {
-	if (CurrentState != EActionState::None) return;
+	if (CurrentState != EActionState::None || bParried) return;
 	GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("Back"), DodgeMontage);
 	CurrentState = EActionState::Dodge;
 }
@@ -144,7 +144,7 @@ void ACombatCharacter::BeginPlay()
 
 void ACombatCharacter::Attack_Implementation()
 {
-	if (CurrentState != EActionState::None) return;
+	if (CurrentState != EActionState::None || bParried) return;
 
 	CurrentState = EActionState::Attack;
 	PlayRandomMontageSection(StanceAttacks[CurrentStance]);
@@ -204,6 +204,8 @@ void ACombatCharacter::GetParried_Implementation()
 {
 	GetMesh()->GetAnimInstance()->Montage_Play(GetHitMontage);
 	CurrentState = EActionState::GetHit;
+	bParried = true;
+	GetWorldTimerManager().SetTimer(ParriedTimer, this, &ThisClass::RecoverFromParry, 3.f, false);
 }
 
 void ACombatCharacter::FinishGetHit_Implementation()
