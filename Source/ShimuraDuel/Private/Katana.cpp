@@ -34,6 +34,9 @@ void AKatana::DisableCollision_Implementation()
 	BoxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+/*
+ *	this line find the exact location where the sword hit the opponent. There are two scene component on either side of the box component and we box trace between them
+ */
 void AKatana::LineTraceHitActor(AActor* OtherActor)
 {
 	FVector StartPos = BoxCompStart->GetComponentLocation();
@@ -51,6 +54,9 @@ void AKatana::LineTraceHitActor(AActor* OtherActor)
 	}
 }
 
+/*
+ *	upon hitting the opponent, we box trace to find the exact location and communicate back to the combat character via the delegate
+ */
 void AKatana::OnHit_Implementation(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
                                    bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -81,7 +87,10 @@ void AKatana::BeginPlay()
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnHitEnd);
 }
 
-// Called every frame
+/*
+ *	we continuously check in tick if we are overlapping with the oppponent as the opponent could be blocking for the first back of the attack
+ *	and then gone back to normal. it that case, damage has to be applied to the opponent
+ */
 void AKatana::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -90,13 +99,6 @@ void AKatana::Tick(float DeltaTime)
 		if (BoxComp->IsOverlappingActor(Cast<ACombatCharacter>(GetOwner())->GetOpponent()))
 		{
 			LineTraceHitActor(Cast<ACombatCharacter>(GetOwner())->GetOpponent());
-			/*ACombatCharacter* Opponent = Cast<ACombatCharacter>(GetOwner())->GetOpponent();
-			if (!Opponent->IsDodging() && !Opponent->IsBlocking())
-			{
-				//UE_LOG(LogTemp, Display, TEXT("GetHitTick"));
-				Opponent->GetHit();
-				DisableCollision();
-			}*/
 		}
 	}
 }

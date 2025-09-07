@@ -6,6 +6,11 @@
 #include "GameFramework/Actor.h"
 #include "Katana.generated.h"
 
+/*
+ *	the Katana class is responsible for communicating who is collided with during the swing back to the combat character. It is also
+ *	responsible for disableing and enabling its collision
+ */
+
 class UBoxComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHitOpponent, FVector, ImpactPoint);

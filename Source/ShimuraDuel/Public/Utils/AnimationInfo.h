@@ -3,7 +3,9 @@
 #include "CoreMinimal.h"
 #include "AnimationInfo.generated.h"
 
-
+/*
+ *	every attack animation used has a mapped animation info with all its data
+ */
 USTRUCT(BlueprintType)
 struct FAnimationInfo : public FTableRowBase
 {

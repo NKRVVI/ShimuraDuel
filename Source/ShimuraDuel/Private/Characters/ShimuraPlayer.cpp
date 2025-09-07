@@ -8,7 +8,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
-#include "LordShimura.h"
+#include "Characters/LordShimura.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -68,8 +68,6 @@ void AShimuraPlayer::BeginPlay()
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Input
 
 void AShimuraPlayer::FinishDodging_Implementation()
 {
@@ -81,6 +79,9 @@ void AShimuraPlayer::FinishAttacking_Implementation()
 	Super::FinishAttacking_Implementation();
 }
 
+/*
+ *	this function is similar to the base once except that it broadcasts to Shimura that an attack has started
+ */
 void AShimuraPlayer::Attack_Implementation()
 {
 	Super::Attack_Implementation();
@@ -167,8 +168,6 @@ void AShimuraPlayer::Move(const FInputActionValue& Value)
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
-
-	//GetMesh()->GetAnimInstance()->GetCurrentActiveMontage()->CompositeSections
 }
 
 void AShimuraPlayer::Look(const FInputActionValue& Value)
@@ -184,6 +183,9 @@ void AShimuraPlayer::Look(const FInputActionValue& Value)
 	}
 }
 
+/*
+ *	this function does the dodge task and dodges in the direction that the player is pressing
+ */
 void AShimuraPlayer::Dodge(const FInputActionValue& Value)
 {
 	if (CurrentState != EActionState::None) return;
@@ -231,6 +233,10 @@ void AShimuraPlayer::Dodge(const FInputActionValue& Value)
 	CurrentState = EActionState::Dodge;
 }
 
+/*
+ *	this input function starts counting in order to decide whether we are blocking or parrying. If the key is down for more that 0.25 secs, then it is considered blocking
+ *	otherwise, it is considered a click and a parry action is done
+ */
 void AShimuraPlayer::BlockStart(const FInputActionValue& Value)
 {
 	if (CurrentState != EActionState::None) return;
@@ -264,6 +270,9 @@ void AShimuraPlayer::ChangeStance(const FInputActionValue& Value)
 	CurrentStance = EStance((static_cast<int>(CurrentStance) + 1) % 4);
 }
 
+/*
+ *	here we set ourselves to face Shimura. we also count for how long the block input button has been pressed
+ */
 void AShimuraPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

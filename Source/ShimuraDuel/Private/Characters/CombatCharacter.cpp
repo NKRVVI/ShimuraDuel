@@ -10,10 +10,8 @@
 #include "Kismet/KismetMathLibrary.h"
 
 
-// Sets default values
 ACombatCharacter::ACombatCharacter()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	Katana = CreateDefaultSubobject<UChildActorComponent>("Katana");
@@ -22,6 +20,10 @@ ACombatCharacter::ACombatCharacter()
 	AttributeComponent = CreateDefaultSubobject<UAttributeComponent>("Attributes");
 }
 
+/*
+ *	this function is called when an attack is received while the character is blocking. It takes into accoung the stagger damage of the attack to know whether our posture
+ *	has been broken or not
+ */
 void ACombatCharacter::GetStaggerHit_Implementation(float Damage)
 {
 	AttributeComponent->AddOrRemovePosture(-Damage);
@@ -41,6 +43,9 @@ void ACombatCharacter::GetStaggerHit_Implementation(float Damage)
 	}
 }
 
+/*
+ *	this function plays the parry spark + time dilation effect
+ */
 void ACombatCharacter::PlayParryEffect_Implementation()
 {
 	if (!bPlayParryEffect) return;
@@ -52,6 +57,10 @@ void ACombatCharacter::PlayParryEffect_Implementation()
 	UGameplayStatics::SetGlobalTimeDilation(this, 0.25f);
 }
 
+/*
+ *	this function gets the current animation playing in the current montage that is active. This is used to find out what attack is playing so that we can
+ *	check the damage to give to the opponent
+ */
 UAnimationAsset* ACombatCharacter::GetCurrentAttackAnimation()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
@@ -80,6 +89,9 @@ UAnimationAsset* ACombatCharacter::GetCurrentAttackAnimation()
 	return nullptr;
 }
 
+/*
+ *	this function dodges backwards. This is only for the Lord Shimura class, the player class has overridden this to include all directions
+ */
 void ACombatCharacter::Dodge_Implementation()
 {
 	if (CurrentState != EActionState::None || bParried) return;
@@ -87,10 +99,13 @@ void ACombatCharacter::Dodge_Implementation()
 	CurrentState = EActionState::Dodge;
 }
 
+/*
+ *	this function is bound to delegate fired by the katana class when it has made contact with the opponent.
+ *	this function get the current animation being played and applies the appropriate damage to the opponent
+ */
 void ACombatCharacter::OnWeaponHitOpponent(FVector ImpactPoint)
 {
 	FAnimationInfo AnimInfo = AShimuraDuelGameMode::GetInstance()->GetAnimationInfo(GetCurrentAttackAnimation());
-	check(AnimInfo.Damage > 0.f);
 	if (!GetOpponent()->IsDodging() && (!GetOpponent()->IsBlocking() || !AnimInfo.bIsDefendable))
 	{
 		//UE_LOG(LogTemp, Display, TEXT("GetHit"));
@@ -111,12 +126,18 @@ void ACombatCharacter::OnWeaponHitOpponent(FVector ImpactPoint)
 	}
 }
 
+/*
+ *	this function is bound to the OnDead delegate on the attribute component. This declares the combat character to be dead
+ */
 void ACombatCharacter::OnDead_Implementation()
 {
 	CurrentState = EActionState::Dead;
 	GetMesh()->GetAnimInstance()->Montage_Play(DeathMontage);
 }
 
+/*
+ *	this helper function plays a random section of a given montage
+ */
 void ACombatCharacter::PlayRandomMontageSection(UAnimMontage* Montage)
 {
 	if (!Montage) return;
@@ -129,11 +150,11 @@ void ACombatCharacter::PlayRandomMontageSection(UAnimMontage* Montage)
 	AnimInstance->Montage_JumpToSection(RandomSection);
 }
 
-// Called when the game starts or when spawned
 void ACombatCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//get the katana actor from the child actor component
 	Katana->GetChildActor()->SetOwner(this);
 	Cast<AKatana>(Katana->GetChildActor())->OnHitOpponent.AddDynamic(this, &ThisClass::OnWeaponHitOpponent);
 
@@ -142,6 +163,9 @@ void ACombatCharacter::BeginPlay()
 	AttributeComponent->OnDead.AddDynamic(this, &ACombatCharacter::OnDead);
 }
 
+/*
+*	this function does the attack task. It plays a random attack animtion from the appropriate stance montage
+ */
 void ACombatCharacter::Attack_Implementation()
 {
 	if (CurrentState != EActionState::None || bParried) return;
@@ -150,11 +174,17 @@ void ACombatCharacter::Attack_Implementation()
 	PlayRandomMontageSection(StanceAttacks[CurrentStance]);
 }
 
+/*
+ *	this function disables the collision for the sword when the swing is over. It is called on the animation blueprint animnotify
+ */
 void ACombatCharacter::FinishSwing_Implementation()
 {
 	Cast<AKatana>(Katana->GetChildActor())->DisableCollision();
 }
 
+/*
+ *this functione exits the attack state. if this function has been called, then the attack animation has been successfully completed.
+ */
 void ACombatCharacter::FinishAttacking_Implementation()
 {
 	CurrentState = EActionState::None;
@@ -162,13 +192,20 @@ void ACombatCharacter::FinishAttacking_Implementation()
 	bInImpactWindow = false;
 }
 
-//POST TELEGRAPH
+/*
+ *	this function is called at the start of the sword swing. This also declares that the time for parrying is over. If the opponent makes contact with the
+ *	sword now, the OnWeaponHitOpponent function gets called
+ */
 void ACombatCharacter::StartSwing_Implementation()
 {
 	OutsideParryWindow();
 	Cast<AKatana>(Katana->GetChildActor())->EnableCollision();
 }
 
+/*
+ *	this function does the parry task. It plays the animation and check whether the opponent is close enough and whether
+ *	his attack is in the parry window. If so then, the attack is parried.
+ */
 void ACombatCharacter::Parry_Implementation()
 {
 	if (CurrentState != EActionState::None && CurrentState != EActionState::Block) return;
@@ -185,6 +222,9 @@ void ACombatCharacter::Parry_Implementation()
 	GetMesh()->GetAnimInstance()->Montage_Play(ParryMontage);
 }
 
+/*
+ *	this function exits the parry task. It also reset the time dilation incase this parry had been successful
+ */
 void ACombatCharacter::FinishParry_Implementation()
 {
 	CurrentState = EActionState::None;
@@ -192,6 +232,9 @@ void ACombatCharacter::FinishParry_Implementation()
 	UGameplayStatics::SetGlobalTimeDilation(this, 1.f);
 }
 
+/*
+ *	this function get called when the character has been dealt damage
+ */
 void ACombatCharacter::GetHit_Implementation(float Damage, FVector ImpactPoint)
 {
 	if (IsDead()) return;
@@ -200,6 +243,10 @@ void ACombatCharacter::GetHit_Implementation(float Damage, FVector ImpactPoint)
 	AttributeComponent->AddOrRemoveHealth(-Damage);
 }
 
+/*
+ *	if a character's attack has been parried, then this function is called. Once parried,the character will not be able to block or dodge for 3 seconds, leaving him open
+ *	to attack. He can still parry the attack if he can.
+ */
 void ACombatCharacter::GetParried_Implementation()
 {
 	GetMesh()->GetAnimInstance()->Montage_Play(GetHitMontage);
@@ -208,6 +255,9 @@ void ACombatCharacter::GetParried_Implementation()
 	GetWorldTimerManager().SetTimer(ParriedTimer, this, &ThisClass::RecoverFromParry, 3.f, false);
 }
 
+/*
+ *	this function is called at the end of the gethit anim montage
+ */
 void ACombatCharacter::FinishGetHit_Implementation()
 {
 	if (!IsDead())
@@ -216,31 +266,27 @@ void ACombatCharacter::FinishGetHit_Implementation()
 	}
 }
 
+/*
+ *	this function is fired by an animnotify at the frame which the attack animation has entered the parry window.
+ */
 void ACombatCharacter::InParryWindow_Implementation()
 {
 	bInParryWindow = true;
 	OnBecomeParriable.Broadcast();
 }
 
+/*
+ *	this function is fired by an animnotify at the fram which the attack animation has exited the parry window
+ */
 void ACombatCharacter::OutsideParryWindow_Implementation()
 {
 	bInParryWindow = false;
 }
 
+/*
+ *	this function exits the dodge task
+ */
 void ACombatCharacter::FinishDodging_Implementation()
 {
 	CurrentState = EActionState::None;
 }
-
-// Called every frame
-void ACombatCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
-// Called to bind functionality to input
-void ACombatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-

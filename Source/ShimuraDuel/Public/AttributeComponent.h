@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "AttributeComponent.generated.h"
 
+/*
+ *	this component is in charge of health and posture and is responsible for modifying them
+ */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float, HealthPercent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPostureChanged, float, PosturePercent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDead);
@@ -29,8 +32,6 @@ public:
 	FDead OnDead;
 
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	float CurrentHealth = 100.f;
@@ -45,9 +46,6 @@ protected:
 	float MaxPosture = 100.f;
 	
 public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
 	void SetHealth(float NewHealth);

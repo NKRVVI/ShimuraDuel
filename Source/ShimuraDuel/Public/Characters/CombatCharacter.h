@@ -10,6 +10,10 @@
 
 class UAttributeComponent;
 
+/*
+ * this enum describes every state the combat character goes through and they are mostly exclusive i.e when one is happening, usually another will not be allowed to happen
+ */
+
 UENUM(BlueprintType)
 enum class EActionState : uint8
 {
@@ -22,6 +26,9 @@ enum class EActionState : uint8
 	Dead UMETA(DisplayName = "Dead")
 };
 
+/*
+ *	This enum describes the outcome of an attack
+ */
 UENUM(BlueprintType)
 enum EAttackEndType : uint8
 {
@@ -39,7 +46,6 @@ class SHIMURADUEL_API ACombatCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ACombatCharacter();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -97,7 +103,6 @@ public:
 	UAttributeComponent* AttributeComponent;
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(BlueprintReadWrite)
@@ -164,11 +169,6 @@ protected:
 	void OnDead();
 
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE bool IsDodging() const { return CurrentState == EActionState::Dodge; }

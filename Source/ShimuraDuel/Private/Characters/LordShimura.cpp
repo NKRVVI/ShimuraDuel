@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "LordShimura.h"
+#include "Characters/LordShimura.h"
 
 #include "Characters/ShimuraPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -39,16 +39,26 @@ void ALordShimura::BeginPlay()
 		Opponent = Player;
 	}
 
+	//when the player has started an attack, this function will be called. This is used to parry when the player is too agressive and counterattack
 	Opponent->OnActionStarted.AddUniqueDynamic(this, &ThisClass::OnOpponentAttackStarted);
 
 }
 
+/*
+ * this is the similar to the base function and also caches the result of the last attack
+ */
 void ALordShimura::FinishAttacking_Implementation()
 {
 	Super::FinishAttacking_Implementation();
 	AttackEnd = Success;
 }
 
+/*
+ *	this function is similar to the base function along with the following tasks:
+ *	it broadcasts that its previous attack has been interuppted by another attack
+ *	it bind to the attackfinished delegate that the player has, this is used to calculate the time taken between the end of an attack and the starting of the new one
+ *	if they are too close, then the player is starting to get aggressive
+ */
 void ALordShimura::GetHit_Implementation(float Damage, FVector ImpactPoint)
 {
 	Super::GetHit_Implementation(Damage, ImpactPoint);
@@ -58,11 +68,21 @@ void ALordShimura::GetHit_Implementation(float Damage, FVector ImpactPoint)
 	Opponent->OnAttackFinished.AddUniqueDynamic(this, &ThisClass::OnOpponentAttackFinished);
 }
 
+/*
+ * this function caches the time at which the attack has ended
+ */
 void ALordShimura::OnOpponentAttackFinished_Implementation(EAttackEndType CurrentAttackEnd)
 {
+	//found potential bug, does not account for distance
 	GetHitTime = GetWorld()->GetTimeSeconds();
 }
 
+/*
+ *	this function is called whenever an attack by the opponent has started.
+ *	SHimura decides whether to dodge the attack or not. He also calculate the average time between the last three attacks of the player
+ *	if the average is too small, then the player is getting aggressive and a parry is scheduled. the class binds to the BecomeParrible delegate of the
+ *	opponent and if he is close enough, he will be parried
+ */
 void ALordShimura::OnOpponentAttackStarted_Implementation(EActionState ActionState)
 {
 	if (ActionState == EActionState::Attack)
@@ -107,6 +127,9 @@ void ALordShimura::OnOpponentAttackStarted_Implementation(EActionState ActionSta
 	}
 }
 
+/*
+ *	this function is similar to the base function other than cacheing the result of the attack
+ */
 void ALordShimura::GetParried_Implementation()
 {
 	Super::GetParried_Implementation();
@@ -114,6 +137,9 @@ void ALordShimura::GetParried_Implementation()
 	AttackEnd = Parried;
 }
 
+/*
+ *	upon parrying the player, the variables are reset and we wait until they get aggressive again
+ */
 void ALordShimura::Parry_Implementation()
 {
 	Super::Parry_Implementation();
@@ -131,7 +157,9 @@ void ALordShimura::OnDead_Implementation()
 	Opponent->OnActionStarted.RemoveAll(this);
 }
 
-// Called every frame
+/*
+ *	in tick we make sure that face the opponent at all time except when we are dodging and attacking
+ */
 void ALordShimura::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -144,12 +172,6 @@ void ALordShimura::Tick(float DeltaTime)
 		Rotation.Yaw = LookAtRotation.Yaw;
 		SetActorRotation(Rotation);
 	}
-}
-
-// Called to bind functionality to input
-void ALordShimura::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
 ACombatCharacter* ALordShimura::GetOpponent() const

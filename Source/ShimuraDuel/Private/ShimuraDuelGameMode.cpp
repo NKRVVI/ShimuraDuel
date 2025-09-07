@@ -16,7 +16,9 @@ AShimuraDuelGameMode::AShimuraDuelGameMode()
 
 	Instance = this;
 }
-
+/*
+ *	we store the datatables info in a hashmap, between the animation asset and the animationinfo struct
+ */
 void AShimuraDuelGameMode::BeginPlay()
 {
 	Super::BeginPlay();
@@ -30,6 +32,9 @@ void AShimuraDuelGameMode::BeginPlay()
 	}
 }
 
+/*
+ *	static helper function for easy retrieval of the gamemode
+ */
 AShimuraDuelGameMode* AShimuraDuelGameMode::GetInstance()
 {
 	return Instance;
