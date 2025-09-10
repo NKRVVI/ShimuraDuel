@@ -24,11 +24,14 @@ void AShimuraDuelGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	TArray<FAnimationInfo*> AnimationInfos;
-	AnimationInfoDataTable->GetAllRows<FAnimationInfo>(TEXT(""), AnimationInfos);
-
-	for (auto AnimationInfo : AnimationInfos)
+	if (AnimationInfoDataTable)
 	{
-		AnimationInfoMap.Add(AnimationInfo->AnimationAsset, *AnimationInfo);
+		AnimationInfoDataTable->GetAllRows<FAnimationInfo>(TEXT(""), AnimationInfos);
+
+		for (auto AnimationInfo : AnimationInfos)
+		{
+			AnimationInfoMap.Add(AnimationInfo->AnimationAsset, *AnimationInfo);
+		}
 	}
 }
 
