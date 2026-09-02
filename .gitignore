@@ -81,3 +81,7 @@ Platforms/*
 *.cpp~
 
 /*.7z
+
+# Content assets (kept out of the repo to stay lightweight)
+*.uasset
+*.umap
